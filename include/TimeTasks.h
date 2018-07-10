@@ -23,6 +23,11 @@
 #include "assert.h"
 #include "errors.h"
 
+/** The following types introduced for the mini-app, to store timing for different tasks and pass it to the main program. */
+typedef std::map<const char*, double> NameDoubleMap;
+typedef std::map<const char*, double>::iterator NameDoubleMapIterator;
+
+
 /* Avoid direct use of this class.
    Instead, use and add to the macros at the bottom
    so that we can redefine the macros when desired
@@ -146,9 +151,9 @@ class TimeTasks
  public:
   void print_cycle_times(int cycle);
   /// Returns the total compute time for each main task
-  void get_cycle_times(double* tskdur, const char* reduce_mode, std::map<const char*, double> & cycle_times);
+  void get_cycle_times(double* tskdur, const char* reduce_mode, NameDoubleMap & cycle_times);
   /// Returns total compute times for main tasks averaged over all processes
-  void get_cycle_times(const char* reduce_mode, std::map<const char*, double> & cycle_times);
+  void get_cycle_times(const char* reduce_mode, NameDoubleMap & cycle_times);
 
  private:
 

@@ -31,7 +31,7 @@ using namespace iPic3D;
 
 // mini-app stuff
 // A dictionary of times with times for certain tasks; keys are task names and "total".
-std::map<const char*, double> cycle_times;
+NameDoubleMap cycle_times;
 
 /** Initialize timings. 
  * 
