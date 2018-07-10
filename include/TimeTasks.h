@@ -22,6 +22,7 @@
 #define __TimeTasks_H__
 #include "assert.h"
 #include "errors.h"
+#include <map>
 
 /** The following types introduced for the mini-app, to store timing for different tasks and pass it to the main program. */
 typedef std::map<const char*, double> NameDoubleMap;
