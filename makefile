@@ -1,10 +1,10 @@
 #
-# makefile for iPic3D (3D null point simulations) for SuperMUC
-# V. Olshevsky
+# Makefile for iPic3D mini-app
+# V. Olshevsky 2018
 #
 CPP = mpicxx
-include = ./include/
-OPTFLAGS = -lstdc++ -O2 -DNO_HDF5 -I${include} -I/usr/lib/openmpi/include/
+include = ./src/include/
+OPTFLAGS = -lstdc++ -O3 -DNO_HDF5 -I${include} -I/usr/lib/openmpi/include/
 #OPTFLAGS = -O3 -DNO_HDF5 -fopt-info-vec -pg -I${include}
 
 #INC_HDF5 = $(HDF5_INC)
@@ -17,77 +17,77 @@ objects = iPIC3Dlib.o Parameters.o iPICmini.o Collective.o VCtopology3D.o Com3DN
 ipic-mini: ${objects}
 	${CPP} ${OPTFLAGS} -o iPICmini ${INC_MPI} ${objects} ${LIB_MPI}
 
-iPICmini.o: iPICmini.cpp
-	${CPP} ${OPTFLAGS} ${INC_MPI} -c iPICmini.cpp 
+iPICmini.o: ./src/iPICmini.cpp
+	${CPP} ${OPTFLAGS} ${INC_MPI} -c ./src/iPICmini.cpp 
 
-Collective.o: ./main/Collective.cpp
-	${CPP} ${OPTFLAGS} -c ./main/Collective.cpp
+Collective.o: ./src/main/Collective.cpp
+	${CPP} ${OPTFLAGS} -c ./src/main/Collective.cpp
 
-iPIC3Dlib.o: ./main/iPIC3Dlib.cpp
-	${CPP} ${OPTFLAGS} -c ./main/iPIC3Dlib.cpp
+iPIC3Dlib.o: ./src/main/iPIC3Dlib.cpp
+	${CPP} ${OPTFLAGS} -c ./src/main/iPIC3Dlib.cpp
 
-Parameters.o: ./main/Parameters.cpp
-	${CPP} ${OPTFLAGS} -c ./main/Parameters.cpp
+Parameters.o: ./src/main/Parameters.cpp
+	${CPP} ${OPTFLAGS} -c ./src/main/Parameters.cpp
 
-VCtopology3D.o: ./communication/VCtopology3D.cpp
-	${CPP} ${OPTFLAGS} -c ./communication/VCtopology3D.cpp
+VCtopology3D.o: ./src/communication/VCtopology3D.cpp
+	${CPP} ${OPTFLAGS} -c ./src/communication/VCtopology3D.cpp
 
-Com3DNonblk.o: ./communication/Com3DNonblk.cpp
-	${CPP} ${OPTFLAGS} -c ./communication/Com3DNonblk.cpp
+Com3DNonblk.o: ./src/communication/Com3DNonblk.cpp
+	${CPP} ${OPTFLAGS} -c ./src/communication/Com3DNonblk.cpp
 
-Grid3DCU.o: ./grids/Grid3DCU.cpp Com3DNonblk.o
-	${CPP} ${OPTFLAGS} -c ./grids/Grid3DCU.cpp
+Grid3DCU.o: ./src/grids/Grid3DCU.cpp Com3DNonblk.o
+	${CPP} ${OPTFLAGS} -c ./src/grids/Grid3DCU.cpp
 
-EMfields3D.o: ./fields/EMfields3D.cpp
-	${CPP} ${OPTFLAGS} -c ./fields/EMfields3D.cpp
+EMfields3D.o: ./src/fields/EMfields3D.cpp
+	${CPP} ${OPTFLAGS} -c ./src/fields/EMfields3D.cpp
 
-Moments.o: ./fields/Moments.cpp
-	${CPP} ${OPTFLAGS} -c ./fields/Moments.cpp
+Moments.o: ./src/fields/Moments.cpp
+	${CPP} ${OPTFLAGS} -c ./src/fields/Moments.cpp
 
-MPIdata.o: ./utility/MPIdata.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/MPIdata.cpp
+MPIdata.o: ./src/utility/MPIdata.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/MPIdata.cpp
 
-TimeTasks.o: ./utility/TimeTasks.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/TimeTasks.cpp
+TimeTasks.o: ./src/utility/TimeTasks.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/TimeTasks.cpp
 
-IDgenerator.o: ./utility/IDgenerator.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/IDgenerator.cpp
+IDgenerator.o: ./src/utility/IDgenerator.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/IDgenerator.cpp
 
-Basic.o: ./utility/Basic.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/Basic.cpp
+Basic.o: ./src/utility/Basic.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/Basic.cpp
 
-debug.o: ./utility/debug.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/debug.cpp
+debug.o: ./src/utility/debug.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/debug.cpp
 
-errors.o: ./utility/errors.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/errors.cpp
+errors.o: ./src/utility/errors.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/errors.cpp
 
-asserts.o: ./utility/asserts.cpp
-	${CPP} ${OPTFLAGS} -c ./utility/asserts.cpp
+asserts.o: ./src/utility/asserts.cpp
+	${CPP} ${OPTFLAGS} -c ./src/utility/asserts.cpp
 
-ConfigFile.o: ./ConfigFile/src/ConfigFile.cpp
-	${CPP} ${OPTFLAGS} -c ./ConfigFile/src/ConfigFile.cpp
+ConfigFile.o: ./src/ConfigFile/ConfigFile.cpp
+	${CPP} ${OPTFLAGS} -c ./src/ConfigFile/ConfigFile.cpp
 
-Timing.o: ./performances/Timing.cpp
-	${CPP} ${OPTFLAGS} -c ./performances/Timing.cpp
+Timing.o: ./src/performances/Timing.cpp
+	${CPP} ${OPTFLAGS} -c ./src/performances/Timing.cpp
 
-Particles3Dcomm.o: ./particles/Particles3Dcomm.cpp
-	${CPP} ${OPTFLAGS} -c ./particles/Particles3Dcomm.cpp
+Particles3Dcomm.o: ./src/particles/Particles3Dcomm.cpp
+	${CPP} ${OPTFLAGS} -c ./src/particles/Particles3Dcomm.cpp
 
-Particles3D.o: ./particles/Particles3D.cpp 
-	${CPP} ${OPTFLAGS} -c ./particles/Particles3D.cpp
+Particles3D.o: ./src/particles/Particles3D.cpp 
+	${CPP} ${OPTFLAGS} -c ./src/particles/Particles3D.cpp
 
-ParallelIO.o: ./inputoutput/ParallelIO.cpp
-	${CPP} ${OPTFLAGS} -c ./inputoutput/ParallelIO.cpp
+ParallelIO.o: ./src/inputoutput/ParallelIO.cpp
+	${CPP} ${OPTFLAGS} -c ./src/inputoutput/ParallelIO.cpp
 
-BcFields3D.o: ./bc/BcFields3D.cpp
-	${CPP} ${OPTFLAGS} -c ./bc/BcFields3D.cpp
+BcFields3D.o: ./src/bc/BcFields3D.cpp
+	${CPP} ${OPTFLAGS} -c ./src/bc/BcFields3D.cpp
 
-EllipticF.o: ./mathlib/EllipticF.cpp
-	${CPP} ${OPTFLAGS} -c ./mathlib/EllipticF.cpp
+EllipticF.o: ./src/mathlib/EllipticF.cpp
+	${CPP} ${OPTFLAGS} -c ./src/mathlib/EllipticF.cpp
 
-GMRES.o: ./solvers/GMRES.cpp
-	${CPP} ${OPTFLAGS} -c ./solvers/GMRES.cpp
+GMRES.o: ./src/solvers/GMRES.cpp
+	${CPP} ${OPTFLAGS} -c ./src/solvers/GMRES.cpp
 
 .PHONY : clean
 clean:
