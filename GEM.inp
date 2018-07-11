@@ -135,6 +135,6 @@ w0 = 0.00325	-0.01624
 # Output for diagnostics in ConservedQuantities.txt
    DiagnosticsOutputCycle = 1
 # Output for particles if 1 it doesnt save particles data
-   ParticlesOutputCycle = 0
+   ParticlesOutputCycle = 10
 # restart cycle
    RestartOutputCycle = 0
