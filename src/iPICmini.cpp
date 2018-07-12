@@ -26,6 +26,7 @@
 #include "TimeTasks.h"
 #include <stdio.h>
 #include <iostream>
+#include <cstring>
 
 using namespace iPic3D;
 
