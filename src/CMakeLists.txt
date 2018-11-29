@@ -1,10 +1,16 @@
-cmake_minimum_required(VERSION 2.8.8) 
+cmake_minimum_required(VERSION 3.8) 
 
-set(CMAKE_CXX_FLAGS  "-O3 -std=c++14 -DNO_HDF5")
+set(CMAKE_CXX_STANDARD 14)
+
+set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5")
 
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 include_directories(include)
+
+add_subdirectory(catalyst)
+include_directories(catalyst)
+
 
 file(
         GLOB
@@ -39,10 +45,12 @@ add_library(
 )
 
 target_link_libraries(
-         iPIC3D
-         iPIC3Dlib
-	 ${MPI_C_LIBRARIES}
+        iPIC3D
+        iPIC3Dlib
+	${MPI_C_LIBRARIES}
+	catalystAdaptor
 )
+#target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC catalystAdaptor)
 
 
 ## to save the executable in the folder where the CMakeLists.txt file is, i.e. CMAKE_CURRENT_SOURCE_DIR
