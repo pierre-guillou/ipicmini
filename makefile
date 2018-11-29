@@ -1,5 +1,5 @@
 #
-# Makefile for iPic3D mini-app
+# Makefile for iPic3D mini-app without HDF5
 # V. Olshevsky 2018
 #
 CPP = mpicxx
@@ -7,18 +7,13 @@ CPP = mpicxx
 include = -I./src/include/
 INC_MPI = -I/usr/lib/openmpi/include/
 
-# HDF5 library is needed to write restarts and particle data.
-# If this functionality is not needed, set the -DNO_HDF5 in OPTFLAGS
-INC_HDF5 = -I/usr/include/hdf5/serial
-LIB_HDF5 = -L/usr/lib/x86_64-linux-gnu/hdf5/serial/lib -lhdf5 -L/usr/lib/x86_64-linux-gnu/hdf5/serial/lib -lhdf5_hl
-
-OPTFLAGS = -lstdc++ -O3 #${include} ${INC_MPI} ${INC_HDF5}
+OPTFLAGS = -lstdc++ -O3 -DNO_HDF5
 #OPTFLAGS = -O3 -DNO_HDF5 -fopt-info-vec -pg -I${include}
 
 objects = iPIC3Dlib.o Parameters.o iPICmini.o Collective.o VCtopology3D.o Com3DNonblk.o Grid3DCU.o \
           EMfields3D.o Particles3Dcomm.o Particles3D.o ConfigFile.o TimeTasks.o IDgenerator.o MPIdata.o \
           Timing.o ParallelIO.o debug.o asserts.o errors.o BcFields3D.o Basic.o Moments.o EllipticF.o \
-          GMRES.o PSKhdf5adaptor.o OutputWrapperFPP.o
+          GMRES.o
 
 ipic-mini: ${objects}
 	${CPP} ${OPTFLAGS} -o iPICmini ${INC_MPI} ${INC_HDF5} ${objects} ${LIB_MPI} ${LIB_HDF5}
@@ -94,13 +89,6 @@ EllipticF.o: ./src/mathlib/EllipticF.cpp
 
 GMRES.o: ./src/solvers/GMRES.cpp
 	${CPP} ${OPTFLAGS} ${include} -c ./src/solvers/GMRES.cpp
-
-# Stuff needed for HDF5 output
-PSKhdf5adaptor.o: ./src/PSKOutput3D/PSKhdf5adaptor.cpp
-	${CPP} ${OPTFLAGS} ${include} ${INC_HDF5} -c ./src/PSKOutput3D/PSKhdf5adaptor.cpp
-
-OutputWrapperFPP.o: ./src/inputoutput/OutputWrapperFPP.cpp
-	${CPP} ${OPTFLAGS} ${include} ${INC_HDF5} -c ./src/inputoutput/OutputWrapperFPP.cpp
 
 .PHONY : clean
 clean:
