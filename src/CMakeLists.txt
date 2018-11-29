@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5")
+set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5, -DUSE_CATALYST")
+set(ParaView_DIR "/home/steven/Programs/ParaView-v5.6.0/build")
 
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
