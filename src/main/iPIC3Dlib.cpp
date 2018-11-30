@@ -263,13 +263,13 @@ int c_Solver::Init(int argc, char **argv) {
 #ifdef USE_CATALYST
   Adaptor::Initialize("../catalyst/scripts/image.py", \
 		  (int)(grid->getXstart()/grid->getDX()), \
-		  grid->getNXN(),
-		  grid->getDX(),
 		  (int)(grid->getYstart()/grid->getDY()), \
-		  grid->getNYN(),
-		  grid->getDY(),
 		  (int)(grid->getZstart()/grid->getDZ()), \
+		  grid->getNXN(),
+		  grid->getNYN(),
 		  grid->getNZN(),
+		  grid->getDX(),
+		  grid->getDY(),
 		  grid->getDZ()	  );
 #endif
 
