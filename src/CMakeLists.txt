@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.8) 
 
-set(CMAKE_CXX_STANDARD 14)
-
-set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5, -DUSE_CATALYST")
-set(ParaView_DIR "/home/steven/Programs/ParaView-v5.6.0/build")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5 -DUSE_CATALYST")
+#set(ParaView_DIR "/home/steven/Programs/ParaView-v5.6.0/build")
 
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
@@ -35,7 +34,7 @@ file(
 
 # Particle solver
 add_executable(
-        iPIC3D
+        iPICmini
 	iPICmini.cpp
 )
 
@@ -46,19 +45,19 @@ add_library(
 )
 
 target_link_libraries(
-        iPIC3D
+        iPICmini
         iPIC3Dlib
 	${MPI_C_LIBRARIES}
 	catalystAdaptor
 )
-#target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC catalystAdaptor)
-
 
 ## to save the executable in the folder where the CMakeLists.txt file is, i.e. CMAKE_CURRENT_SOURCE_DIR
-set_target_properties(iPIC3D PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set_target_properties(iPICmini PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+target_compile_features(iPICmini PUBLIC cxx_std_11)
 
 ## debug releases have a _d appended to the executable
-set_target_properties(iPIC3D PROPERTIES DEBUG_POSTFIX "_d")
+set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
 
 message("Which system am I compiling for:")
 message("MYHOSTNAME is ${myhostname}")
