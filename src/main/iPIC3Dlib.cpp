@@ -261,7 +261,7 @@ int c_Solver::Init(int argc, char **argv) {
   Qremoved = new double[ns];
 
 #ifdef USE_CATALYST
-  Adaptor::Initialize("../catalyst/scripts/image.py", \
+  Adaptor::Initialize((col->getParaviewScriptPath()).c_str(), \
 		  (int)(grid->getXstart()/grid->getDX()), \
 		  (int)(grid->getYstart()/grid->getDY()), \
 		  (int)(grid->getZstart()/grid->getDZ()), \

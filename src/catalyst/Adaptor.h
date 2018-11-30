@@ -5,7 +5,7 @@
 
 namespace Adaptor
 {
-void Initialize(char* script, const int start_x, const int start_y, const int start_z, \
+void Initialize(const char* script, const int start_x, const int start_y, const int start_z, \
                           const int nx, const int ny, const int nz, \
                           const double dx, const double dy, const double dz);
 

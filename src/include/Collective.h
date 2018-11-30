@@ -204,6 +204,10 @@ class Collective
     /*! Boundary condition selection for BCFace for the magnetic field components */
     int bcBx[6], bcBy[6], bcBz[6];
 
+    // Catalyst stuff
+
+    string getParaviewScriptPath()const{return ParaviewScriptPath;}
+
   private:
     /*! inputfile */
     string inputfile;
@@ -430,6 +434,11 @@ class Collective
     int DiagnosticsOutputCycle;
     /*! Call Finalize() at end of program execution (true by default) */
     bool CallFinalize;
+
+    // Catalyst stuff
+
+    /** The path to the Python script produced by ParaView */
+    string ParaviewScriptPath;
 };
 typedef Collective CollectiveIO;
 
