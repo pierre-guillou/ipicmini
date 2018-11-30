@@ -35,24 +35,52 @@ int _dz;
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void UpdateVTKAttributes(vtkCPInputDataDescription* idd)
+void UpdateVTKAttributes(vtkCPInputDataDescription* idd, arr3_double Bx, arr3_double By, arr3_double Bz)
 {
-//  if (idd->IsFieldNeeded("velocity", vtkDataObject::POINT) == true)
-//  {
-//    if (VTKGrid->GetPointData()->GetNumberOfArrays() == 0)
-//    {
-//      // velocity array
-//      vtkNew<vtkDoubleArray> velocityData;
-//      velocityData->SetName("velocity");
-//      velocityData->SetNumberOfComponents(3);
-//      velocityData->SetNumberOfTuples(static_cast<vtkIdType>(velocity.size() / 3));
-//      VTKGrid->GetPointData()->AddArray(velocityData);
-//    }
-//    vtkDoubleArray* velocityData =
-//      vtkDoubleArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("velocity"));
-//
-//    velocityData->SetArray(const_cast<double*>(velocity.data()), static_cast<vtkIdType>(velocity.size()), 1);
-//  }
+  // I am not sure whether we need to do this check 
+  if (idd->IsFieldNeeded("B", vtkDataObject::POINT) == true)
+  {
+    // Create a VTK object representing magnetic field array
+
+    // Get a reference to the grid's point data object.
+    vtkPointData* vtk_point_data = VTKGrid->GetPointData();
+
+    // We need to create a new VTK array object and attach it to the point data,
+    // if it hasn't been done yet.
+    if (vtk_point_data->GetNumberOfArrays() == 0)
+    {
+      vtkNew<vtkDoubleArray> field_array;
+      field_array->SetName("B");
+      field_array->SetNumberOfComponents(3);
+      field_array->SetNumberOfTuples(static_cast<vtkIdType>(_nx * _ny * _nz));
+      vtk_point_data->AddArray(field_array);
+    }
+    vtkDoubleArray* field_array = vtkDoubleArray::SafeDownCast(vtk_point_data->GetArray("B"));
+
+    // Feed the data into VTK array. Since we don't know the memory layout of our B field data, 
+    // we feed it point-by-point, in a very slow way
+
+    // Array of grid's dimensions
+    int* dims = VTKGrid->GetDimensions();
+
+    // Cycle over all VTK grid's points, get their indices and copy the data.
+    // We want to have only one cycle over point's ID to efficiently use multi-threading.
+    for (long p = 0; p < VTKGrid->GetNumberOfPoints(); ++p)
+    {
+      // Get cells's indices i, j , k
+      unsigned long k = p / (dims[0] * dims[1]);
+      unsigned long j = (p - k * dims[0] * dims[1]) / dims[0];
+      unsigned long i = p - k * dims[0] * dims[1] - j * dims[0];
+
+      // CAUTION!!! K should be always zero in the 2D case?
+      field_array->SetComponent(p, 0, Bx[i][j][k]);
+      field_array->SetComponent(p, 1, By[i][j][k]);
+      field_array->SetComponent(p, 2, Bz[i][j][k]);
+    }
+
+    /// Fast way, if memry layout is correct.
+    //velocityData->SetArray(const_cast<double*>(velocity.data()), static_cast<vtkIdType>(velocity.size()), 1);
+  }
 //  if (idd->IsFieldNeeded("collision", vtkDataObject::POINT) == true)
 //  {
 //    if (VTKGrid->GetPointData()->GetArray("collision") == nullptr)
@@ -72,10 +100,10 @@ void UpdateVTKAttributes(vtkCPInputDataDescription* idd)
 }
 
 //----------------------------------------------------------------------------
-void BuildVTKDataStructures(vtkCPInputDataDescription *idd)
+void BuildVTKDataStructures(vtkCPInputDataDescription *idd, arr3_double Bx, arr3_double By, arr3_double Bz)
 {
   // feed data to grid
-  UpdateVTKAttributes(idd);
+  UpdateVTKAttributes(idd, Bx, By, Bz);
 }
 }
 
@@ -140,7 +168,7 @@ void Finalize()
 }
 
 //----------------------------------------------------------------------------
-void CoProcess(double time, unsigned int timeStep)
+void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double By, arr3_double Bz)
 {
   vtkNew<vtkCPDataDescription> dataDescription;
   dataDescription->AddInput(InputName);
@@ -149,7 +177,7 @@ void CoProcess(double time, unsigned int timeStep)
   if (Processor->RequestDataDescription(dataDescription) != 0)
   {
     vtkCPInputDataDescription* idd = dataDescription->GetInputDescriptionByName(InputName);
-    BuildVTKDataStructures(idd);
+    BuildVTKDataStructures(idd, Bx, By, Bz);
     idd->SetGrid(VTKGrid);
     Processor->CoProcess(dataDescription);
   }

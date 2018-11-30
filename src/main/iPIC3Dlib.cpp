@@ -480,7 +480,7 @@ bool c_Solver::ParticlesMover()
 void c_Solver::WriteOutput(int cycle) {
 
 #ifdef USE_CATALYST
-  Adaptor::CoProcess(col->getDt()*cycle, cycle);
+  Adaptor::CoProcess(col->getDt()*cycle, cycle, EMf->getBx(), EMf->getBy(), EMf->getBz());
 #endif
 
   WriteConserved(cycle);
