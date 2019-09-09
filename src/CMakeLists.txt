@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.8) 
+cmake_minimum_required(VERSION 3.8)
+project(iPICmini LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5 -DUSE_CATALYST")
@@ -7,6 +8,7 @@ set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5 -DUSE_CATALYST")
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 include_directories(include)
+add_definitions(-DOMPI_SKIP_MPICXX)
 
 add_subdirectory(catalyst)
 include_directories(catalyst)
@@ -50,11 +52,6 @@ target_link_libraries(
 	${MPI_C_LIBRARIES}
 	catalystAdaptor
 )
-
-## to save the executable in the folder where the CMakeLists.txt file is, i.e. CMAKE_CURRENT_SOURCE_DIR
-set_target_properties(iPICmini PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-target_compile_features(iPICmini PUBLIC cxx_std_11)
 
 ## debug releases have a _d appended to the executable
 set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
