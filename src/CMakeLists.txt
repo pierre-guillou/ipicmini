@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(IPIC_INCLUDES ${CMAKE_SOURCE_DIR}/include)
 set(IPIC_LIBRARIES "")
 set(IPIC_DEFINITIONS "")
+add_definitions(-DOMPI_SKIP_MPICXX)
 
 # Find MPI
 find_package(MPI REQUIRED)
