@@ -1,2 +1,6 @@
 *.o
 iPICmini
+/data/
+/build/
+/.ccls-cache/
+/particles_*
