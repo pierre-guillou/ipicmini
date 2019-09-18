@@ -1,60 +1,95 @@
-cmake_minimum_required(VERSION 3.8) 
+cmake_minimum_required(VERSION 3.8)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS  "-O3 -DNO_HDF5 -DUSE_CATALYST")
-#set(ParaView_DIR "/home/steven/Programs/ParaView-v5.6.0/build")
+project(iPICmini C CXX)
 
-find_package(MPI)
-include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-include_directories(include)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
 
-add_subdirectory(catalyst)
-include_directories(catalyst)
+set(IPIC_INCLUDES ${CMAKE_SOURCE_DIR}/include)
+set(IPIC_LIBRARIES "")
+set(IPIC_DEFINITIONS "")
 
+# Find MPI
+find_package(MPI REQUIRED)
+list(APPEND IPIC_LIBRARIES ${MPI_LIBRARIES})
 
-file(
-        GLOB
-        src_files
-        ConfigFile/*.cpp
-        PSKOutput3D/*.cpp
-        bc/*.cpp
-        communication/*.cpp
-        fields/*.cpp
-        grids/*.cpp
-        inputoutput/*.cpp
-        mathlib/*.cpp
-        mpidata/*.cpp
-        particles/*.cpp
-        performances/*.cpp
-        processtopology/*.cpp
-        solvers/*.cpp
-        utility/*.cpp
-        main/*.cpp
-)
+# Find HDF5
+option(USE_HDF5 "Use HDF5 library" OFF)
+if(USE_HDF5)
+  find_package(HDF5 REQUIRED)
+  list(APPEND IPIC_LIBRARIES ${HDF5_LIBRARIES})
+else()
+  list(APPEND IPIC_DEFINITIONS NO_HDF5)
+endif()
+
+# Find ParaView
+option(USE_CATALYST "Use Catalyst adaptor" ON)
+if(USE_CATALYST)
+  find_package(ParaView 5.7 REQUIRED)
+
+  if (NOT TARGET ParaView::PythonCatalyst)
+    message(STATUS
+        "${CMAKE_PROJECT_NAME} requires ParaView to be built with Catalyst and "
+        "Python support enabled. Please rebuild ParaView (or point to a "
+        "different build of ParaView) with PARAVIEW_ENABLE_CATALYST and "
+        "PARAVIEW_ENABLE_PYTHON set to TRUE")
+  else()
+    add_library(iPICAdaptor SHARED ${CMAKE_SOURCE_DIR}/catalyst/Adaptor.cxx)
+    target_link_libraries(iPICAdaptor ParaView::PythonCatalyst VTK::CommonDataModel)
+
+    list(APPEND IPIC_LIBRARIES iPICAdaptor)
+    list(APPEND IPIC_DEFINITIONS USE_CATALYST)
+    list(APPEND IPIC_INCLUDES ${CMAKE_SOURCE_DIR}/catalyst)
+  endif()
+endif()
 
 # Particle solver
 add_executable(
-        iPICmini
-	iPICmini.cpp
+  iPICmini
+  ${CMAKE_SOURCE_DIR}/iPICmini.cpp
 )
 
 add_library(
-    iPIC3Dlib      #name of the library
-	SHARED	   #type of the library
-    ${src_files}
+  iPIC3Dlib
+  SHARED
+  ${CMAKE_SOURCE_DIR}/iPICmini.cpp
+  ${CMAKE_SOURCE_DIR}/main/Collective.cpp
+  ${CMAKE_SOURCE_DIR}/main/iPIC3Dlib.cpp
+  ${CMAKE_SOURCE_DIR}/main/Parameters.cpp
+  ${CMAKE_SOURCE_DIR}/communication/VCtopology3D.cpp
+  ${CMAKE_SOURCE_DIR}/communication/Com3DNonblk.cpp
+  ${CMAKE_SOURCE_DIR}/grids/Grid3DCU.cpp
+  ${CMAKE_SOURCE_DIR}/fields/EMfields3D.cpp
+  ${CMAKE_SOURCE_DIR}/fields/Moments.cpp
+  ${CMAKE_SOURCE_DIR}/utility/MPIdata.cpp
+  ${CMAKE_SOURCE_DIR}/utility/TimeTasks.cpp
+  ${CMAKE_SOURCE_DIR}/utility/IDgenerator.cpp
+  ${CMAKE_SOURCE_DIR}/utility/Basic.cpp
+  ${CMAKE_SOURCE_DIR}/utility/debug.cpp
+  ${CMAKE_SOURCE_DIR}/utility/errors.cpp
+  ${CMAKE_SOURCE_DIR}/utility/asserts.cpp
+  ${CMAKE_SOURCE_DIR}/ConfigFile/ConfigFile.cpp
+  ${CMAKE_SOURCE_DIR}/performances/Timing.cpp
+  ${CMAKE_SOURCE_DIR}/particles/Particles3Dcomm.cpp
+  ${CMAKE_SOURCE_DIR}/particles/Particles3D.cpp
+  ${CMAKE_SOURCE_DIR}/inputoutput/ParallelIO.cpp
+  ${CMAKE_SOURCE_DIR}/bc/BcFields3D.cpp
+  ${CMAKE_SOURCE_DIR}/mathlib/EllipticF.cpp
+  ${CMAKE_SOURCE_DIR}/solvers/GMRES.cpp
 )
 
 target_link_libraries(
-        iPICmini
-        iPIC3Dlib
-	${MPI_C_LIBRARIES}
-	catalystAdaptor
+  iPICmini
+  iPIC3Dlib
+  ${IPIC_LIBRARIES}
 )
 
-## to save the executable in the folder where the CMakeLists.txt file is, i.e. CMAKE_CURRENT_SOURCE_DIR
-set_target_properties(iPICmini PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+target_include_directories(iPIC3Dlib
+  PUBLIC
+  ${IPIC_INCLUDES}
+)
 
-target_compile_features(iPICmini PUBLIC cxx_std_11)
+target_compile_definitions(iPIC3Dlib PRIVATE ${IPIC_DEFINITIONS})
 
 ## debug releases have a _d appended to the executable
 set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
