@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(iPICmini C CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register")
+set(CMAKE_CXX_STANDARD 11)
 
 set(IPIC_INCLUDES ${CMAKE_SOURCE_DIR}/include)
 set(IPIC_LIBRARIES "")
@@ -19,7 +18,7 @@ if(USE_HDF5)
   find_package(HDF5 REQUIRED)
   list(APPEND IPIC_LIBRARIES ${HDF5_LIBRARIES})
 else()
-  list(APPEND IPIC_DEFINITIONS NO_HDF5)
+  list(APPEND IPIC_DEFINITIONS -DNO_HDF5)
 endif()
 
 # Find ParaView
@@ -38,7 +37,7 @@ if(USE_CATALYST)
     target_link_libraries(iPICAdaptor ParaView::PythonCatalyst VTK::CommonDataModel)
 
     list(APPEND IPIC_LIBRARIES iPICAdaptor)
-    list(APPEND IPIC_DEFINITIONS USE_CATALYST)
+    list(APPEND IPIC_DEFINITIONS -DUSE_CATALYST)
     list(APPEND IPIC_INCLUDES ${CMAKE_SOURCE_DIR}/catalyst)
   endif()
 endif()
@@ -89,7 +88,7 @@ target_include_directories(iPIC3Dlib
   ${IPIC_INCLUDES}
 )
 
-target_compile_definitions(iPIC3Dlib PRIVATE ${IPIC_DEFINITIONS})
+target_compile_definitions(iPIC3Dlib PUBLIC ${IPIC_DEFINITIONS})
 
 ## debug releases have a _d appended to the executable
 set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
