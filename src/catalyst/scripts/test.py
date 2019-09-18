@@ -82,14 +82,6 @@ def CreateCoProcessor():
           DatabasePath='cinema.cdb')
       tTKCinemaWriter1.OverrideDatabase = 0
 
-      # create a new 'Parallel PolyData Writer'
-      parallelPolyDataWriter1 = servermanager.writers.XMLPPolyDataWriter(Input=tTKCinemaWriter1)
-
-      # register the writer with coprocessor
-      # and provide it with information such as the filename to use,
-      # how frequently to write the data, etc.
-      coprocessor.RegisterWriter(parallelPolyDataWriter1, filename='ph_%t.pvtp', freq=1, paddingamount=0)
-
       # create a new 'Threshold'
       threshold1 = Threshold(Input=tTKPersistenceDiagram1)
       threshold1.Scalars = ['CELLS', 'Persistence']
@@ -114,7 +106,7 @@ def CreateCoProcessor():
       # register the writer with coprocessor
       # and provide it with information such as the filename to use,
       # how frequently to write the data, etc.
-      coprocessor.RegisterWriter(parallelUnstructuredGridWriter1, filename='critPoints_%t.pvtu', freq=10, paddingamount=0)
+      coprocessor.RegisterWriter(parallelUnstructuredGridWriter1, filename='data/catalyst/critPoints_%t.pvtu', freq=10, paddingamount=0)
 
       # create a new 'Parallel Image Data Writer'
       parallelImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=taylorGreen_B_0vtk)
@@ -122,11 +114,10 @@ def CreateCoProcessor():
       # register the writer with coprocessor
       # and provide it with information such as the filename to use,
       # how frequently to write the data, etc.
-      coprocessor.RegisterWriter(parallelImageDataWriter1, filename='sim_%t.pvti', freq=100, paddingamount=0)
+      coprocessor.RegisterWriter(parallelImageDataWriter1, filename='data/catalyst/sim_%t.pvti', freq=100, paddingamount=0)
 
       # ----------------------------------------------------------------
       # finally, restore active source
-      SetActiveSource(parallelPolyDataWriter1)
       # ----------------------------------------------------------------
     return Pipeline()
 
