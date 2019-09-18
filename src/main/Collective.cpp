@@ -1020,6 +1020,7 @@ int Collective::read_total_field_restart(const VCtopology3D* vct, const Grid* gr
 {
 #ifdef NO_HDF5
   eprintf("Require HDF5 to read from restart file.");
+  return 0;
 #else
   int myrank = vct->getCartesian_rank();
   if (myrank == 0)
