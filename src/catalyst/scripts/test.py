@@ -75,12 +75,20 @@ def CreateCoProcessor():
       tTKPersistenceDiagram1 = TTKPersistenceDiagram(Input=tTKScalarFieldNormalizer1)
       tTKPersistenceDiagram1.ScalarField = 'Result'
       tTKPersistenceDiagram1.InputOffsetField = 'Result'
-      tTKPersistenceDiagram1.EmbedinDomain = 1
+      tTKPersistenceDiagram1.EmbedinDomain = 0
 
       # create a new 'TTK CinemaWriter'
       tTKCinemaWriter1 = TTKCinemaWriter(Input=tTKPersistenceDiagram1,
           DatabasePath='cinema.cdb')
       tTKCinemaWriter1.OverrideDatabase = 0
+
+      # create a new 'Parallel PolyData Writer'
+      parallelPolyDataWriter1 = servermanager.writers.XMLPPolyDataWriter(Input=tTKCinemaWriter1)
+
+      # register the writer with coprocessor
+      # and provide it with information such as the filename to use,
+      # how frequently to write the data, etc.
+      coprocessor.RegisterWriter(parallelPolyDataWriter1, filename='data/catalyst/ph_%t.pvtp', freq=1, paddingamount=0)
 
       # create a new 'Threshold'
       threshold1 = Threshold(Input=tTKPersistenceDiagram1)
@@ -118,6 +126,7 @@ def CreateCoProcessor():
 
       # ----------------------------------------------------------------
       # finally, restore active source
+      SetActiveSource(parallelPolyDataWriter1)
       # ----------------------------------------------------------------
     return Pipeline()
 
