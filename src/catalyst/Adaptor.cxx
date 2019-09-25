@@ -9,6 +9,7 @@
 #include <vtkCellData.h>
 #include <vtkCellType.h>
 #include <vtkDoubleArray.h>
+#include <vtkStringArray.h>
 #include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -30,6 +31,7 @@ int _dy;
 int _start_z;
 int _nz;
 int _dz;
+std::string _caseName{};
 
 
 //----------------------------------------------------------------------------
@@ -111,12 +113,11 @@ namespace Adaptor
 {
 
 //----------------------------------------------------------------------------
-void Initialize(const char* script, const int start_x, const int start_y, const int start_z, \
-                          const int nx, const int ny, const int nz, \
-                          const double dx, const double dy, const double dz)
-{
-  if (Processor == NULL)
-  {
+void Initialize(const char *script, const int start_x, const int start_y,
+                const int start_z, const int nx, const int ny, const int nz,
+                const double dx, const double dy, const double dz,
+                const std::string caseName) {
+  if (Processor == NULL) {
     Processor = vtkCPProcessor::New();
     Processor->Initialize();
   }
@@ -137,6 +138,8 @@ void Initialize(const char* script, const int start_x, const int start_y, const 
   _start_z = start_z;
   _nz = nz;
   _dz = dz;
+
+  _caseName = caseName;
 
   if (VTKGrid == NULL)
   {
@@ -181,6 +184,12 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   fd->InsertNextTuple(ts);
   VTKGrid->GetFieldData()->AddArray(fd);
 
+  auto fd2 = vtkSmartPointer<vtkStringArray>::New();
+  fd2->SetName("CaseName");
+  fd2->SetNumberOfComponents(1);
+  fd2->InsertNextValue(_caseName.c_str());
+  VTKGrid->GetFieldData()->AddArray(fd2);
+
   if (Processor->RequestDataDescription(dataDescription) != 0)
   {
     vtkCPInputDataDescription* idd = dataDescription->GetInputDescriptionByName(InputName);
@@ -189,5 +198,4 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
     Processor->CoProcess(dataDescription);
   }
 }
-} // end of Catalyst namespace
-
+} // namespace Adaptor
