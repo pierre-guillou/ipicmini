@@ -174,6 +174,13 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   dataDescription->AddInput(InputName);
   dataDescription->SetTimeData(time, timeStep);
 
+  auto fd = vtkSmartPointer<vtkIntArray>::New();
+  double ts[1] = {static_cast<double>(timeStep)};
+  fd->SetName("TimeStep");
+  fd->SetNumberOfComponents(1);
+  fd->InsertNextTuple(ts);
+  VTKGrid->GetFieldData()->AddArray(fd);
+
   if (Processor->RequestDataDescription(dataDescription) != 0)
   {
     vtkCPInputDataDescription* idd = dataDescription->GetInputDescriptionByName(InputName);
