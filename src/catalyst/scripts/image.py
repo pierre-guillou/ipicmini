@@ -26,6 +26,10 @@ make_cinema_table=False
 from paraview.simple import *
 from paraview import coprocessing
 
+# Load TTK plugin
+paraview.simple.LoadPlugin(
+    "/usr/local/lib/plugins/libTopologyToolKit.so", ns=globals()
+)
 # ----------------------- CoProcessor definition -----------------------
 
 def CreateCoProcessor():
@@ -49,15 +53,34 @@ def CreateCoProcessor():
       # create a producer from a simulation input
       particles = coprocessor.CreateProducer(datadescription, 'particles')
 
+      # create a new 'Calculator'
+      calculator1 = Calculator(Input=particles)
+      calculator1.Function = 'mag(B)'
+
+      # create a new 'Parallel Image Data Writer'
+      parallelImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=calculator1)
+
+      # register the writer with coprocessor
+      # and provide it with information such as the filename to use,
+      # how frequently to write the data, etc.
+      coprocessor.RegisterWriter(
+        parallelImageDataWriter1, filename='data/particles_%t.pvti', freq=1, paddingamount=0
+      )
+
+      if False:
+        topoCompressionWriter = servermanager.writers.TTKTopologicalCompressionWriter(
+          Input=calculator1
+        )
+        topoCompressionWriter.ScalarField = 'Result'
+        topoCompressionWriter.ZFPbitbudgetextra = 1
+
+        coprocessor.RegisterWriter(topoCompressionWriter, filename='data/comp_%t.ttk', freq=10)
+
+
       # ----------------------------------------------------------------
       # finally, restore active source
       SetActiveSource(particles)
       # ----------------------------------------------------------------
-
-      # Now any catalyst writers
-      xMLPImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=particles)
-      coprocessor.RegisterWriter(xMLPImageDataWriter1, filename='particles_%t.pvti', freq=1, paddingamount=0)
-
     return Pipeline()
 
   class CoProcessor(coprocessing.CoProcessor):
@@ -69,7 +92,7 @@ def CreateCoProcessor():
   freqs = {'particles': [1, 1]}
   coprocessor.SetUpdateFrequencies(freqs)
   if requestSpecificArrays:
-    arrays = [['DistanceSquared', 0], ['Swirl', 0], ['X', 0]]
+    arrays = [['B', 0]]
     coprocessor.SetRequestedArrays('particles', arrays)
   coprocessor.SetInitialOutputOptions(timeStepToStartOutputAt,forceOutputAtFirstCall)
 
