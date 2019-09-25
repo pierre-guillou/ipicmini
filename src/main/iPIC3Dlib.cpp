@@ -270,7 +270,8 @@ int c_Solver::Init(int argc, char **argv) {
 		  grid->getNZN(),
 		  grid->getDX(),
 		  grid->getDY(),
-		  grid->getDZ()	  );
+		  grid->getDZ(),
+		  col->getCase());
 #endif
 
   my_clock = new Timing(myrank);
