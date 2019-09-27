@@ -79,7 +79,7 @@ def CreateCoProcessor():
 
       # create a new 'TTK CinemaWriter'
       tTKCinemaWriter1 = TTKCinemaWriter(Input=tTKPersistenceDiagram1,
-          DatabasePath='cinema.cdb')
+          DatabasePath='data/cinema.cdb')
       tTKCinemaWriter1.OverrideDatabase = 0
 
       # create a new 'Parallel PolyData Writer'
