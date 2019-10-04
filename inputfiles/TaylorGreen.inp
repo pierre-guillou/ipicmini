@@ -64,9 +64,9 @@ nzc =  64                  # nzc = number of cells - z direction
 
 # %%%%%%%%%%%%%% MPI TOPOLOGY %%%%%%%%%%%%%%
 # number of MPI subdomains in each direction
-XLEN = 2
-YLEN = 2
-ZLEN = 2
+XLEN = 1
+YLEN = 1
+ZLEN = 1
 # topology (1=true, 0=false): USE PERIODIC IN ALL DIRECTIONS
 PERIODICX = 1
 PERIODICY = 1
