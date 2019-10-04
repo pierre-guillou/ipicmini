@@ -67,7 +67,7 @@ def CreateCoProcessor():
         parallelImageDataWriter1, filename='data/particles_%t.pvti', freq=1, paddingamount=0
       )
 
-      if False:
+      if True:
         topoCompressionWriter = servermanager.writers.TTKTopologicalCompressionWriter(
           Input=calculator1
         )
