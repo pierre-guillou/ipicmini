@@ -26,19 +26,10 @@ make_cinema_table=False
 from paraview.simple import *
 from paraview import coprocessing
 
-# --------------------------------------------------------------
-# The following loads TTK's plugins.
-# Topology Toolkit 0.9.7
-# --------------------------------------------------------------
-import glob
-import os
-from os.path import join as ttk_path_join
-
-ttk_plugins_path = "/usr/local/lib/plugins/"
-for x in glob.glob(
-    ttk_path_join(ttk_plugins_path, "*.so" if os.name == "posix" else "*.dll")
-):
-    LoadPlugin(x, ns=globals())
+# Load TTK plugin
+paraview.simple.LoadPlugin(
+    "/usr/local/lib/plugins/libTopologyToolKit.so", ns=globals()
+)
 
 # ----------------------- CoProcessor definition -----------------------
 
@@ -59,12 +50,11 @@ def CreateCoProcessor():
       #### disable automatic camera reset on 'Show'
       paraview.simple._DisableFirstRenderCameraReset()
 
-      # create a new 'Legacy VTK Reader'
       # create a producer from a simulation input
-      taylorGreen_B_0vtk = coprocessor.CreateProducer(datadescription, 'particles')
+      particles = coprocessor.CreateProducer(datadescription, 'particles')
 
       # create a new 'Calculator'
-      calculator1 = Calculator(Input=taylorGreen_B_0vtk)
+      calculator1 = Calculator(Input=particles)
       calculator1.Function = 'mag(B)'
 
       # create a new 'TTK ScalarFieldNormalizer'
@@ -117,16 +107,24 @@ def CreateCoProcessor():
       coprocessor.RegisterWriter(parallelUnstructuredGridWriter1, filename='data/catalyst/critPoints_%t.pvtu', freq=10, paddingamount=0)
 
       # create a new 'Parallel Image Data Writer'
-      parallelImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=taylorGreen_B_0vtk)
+      parallelImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=calculator1)
 
       # register the writer with coprocessor
       # and provide it with information such as the filename to use,
       # how frequently to write the data, etc.
       coprocessor.RegisterWriter(parallelImageDataWriter1, filename='data/catalyst/sim_%t.pvti', freq=100, paddingamount=0)
 
+      topoCompressionWriter = servermanager.writers.TTKTopologicalCompressionWriter(
+          Input=calculator1
+      )
+      topoCompressionWriter.ScalarField = 'Result'
+      topoCompressionWriter.ZFPbitbudgetextra = 1
+
+      coprocessor.RegisterWriter(topoCompressionWriter, filename='data/comp_%t.ttk', freq=10)
+
       # ----------------------------------------------------------------
       # finally, restore active source
-      SetActiveSource(parallelPolyDataWriter1)
+      SetActiveSource(particles)
       # ----------------------------------------------------------------
     return Pipeline()
 
