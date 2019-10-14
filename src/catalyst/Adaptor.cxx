@@ -158,6 +158,12 @@ void Initialize(const char *script, const int start_x, const int start_y,
 //----------------------------------------------------------------------------
 void Finalize(const std::string &script)
 {
+  vtkNew<vtkCPPythonScriptPipeline> pipeline;
+  pipeline->Initialize(script.c_str());
+  Processor->AddPipeline(pipeline);
+  vtkNew<vtkCPDataDescription> dataDescription;
+  Processor->CoProcess(dataDescription);
+
   if (Processor)
   {
     Processor->Delete();
