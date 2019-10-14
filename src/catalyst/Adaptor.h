@@ -12,7 +12,7 @@ void Initialize(const char *script, const int start_x, const int start_y,
                 const double dx, const double dy, const double dz,
                 std::string caseName);
 
-void Finalize();
+void Finalize(const std::string &script = "");
 
 void CoProcess(double time, unsigned int timeStep, arr3_double Bx,
                arr3_double By, arr3_double Bz);

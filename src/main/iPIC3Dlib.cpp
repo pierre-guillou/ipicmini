@@ -75,7 +75,7 @@ c_Solver::~c_Solver()
   }
 
 #ifdef USE_CATALYST
-  Adaptor::Finalize();
+  Adaptor::Finalize(col->getParaviewFinalScriptPath());
 #endif
 
   delete [] Ke;

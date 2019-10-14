@@ -156,7 +156,7 @@ void Initialize(const char *script, const int start_x, const int start_y,
 }
 
 //----------------------------------------------------------------------------
-void Finalize()
+void Finalize(const std::string &script)
 {
   if (Processor)
   {
