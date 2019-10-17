@@ -159,16 +159,7 @@ void Initialize(const char *script, const int start_x, const int start_y,
 void Finalize(const std::string &script)
 {
   if (!script.empty()) {
-    vtkNew<vtkCPPythonScriptPipeline> pipeline;
-    pipeline->Initialize(script.c_str());
-    Processor->AddPipeline(pipeline);
-    vtkNew<vtkCPDataDescription> dataDescription;
-    dataDescription->AddInput(InputName);
-    dataDescription->SetTimeData(0.0, 0);
-    auto idd = dataDescription->GetInputDescriptionByName(InputName);
-    idd->SetGrid(VTKGrid);
-
-    Processor->CoProcess(dataDescription);
+    vtkNew<vtkCPPythonScriptPipeline>()->Initialize(script.c_str());
   }
 
   if (Processor)
