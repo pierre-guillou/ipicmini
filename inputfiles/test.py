@@ -57,6 +57,11 @@ def CreateCoProcessor():
       calculator1 = Calculator(Input=particles)
       calculator1.Function = 'mag(B)'
 
+      # create a new 'TTK CinemaWriter'
+      tTKCinemaWriter2 = TTKCinemaWriter(Input=calculator1,
+          DatabasePath='data/cin2.cdb')
+      tTKCinemaWriter2.UseTopologicalCompression = True
+
       # create a new 'TTK ScalarFieldNormalizer'
       tTKScalarFieldNormalizer1 = TTKScalarFieldNormalizer(Input=calculator1)
       tTKScalarFieldNormalizer1.ScalarField = 'Result'
@@ -106,21 +111,22 @@ def CreateCoProcessor():
       # how frequently to write the data, etc.
       coprocessor.RegisterWriter(parallelUnstructuredGridWriter1, filename='data/catalyst/critPoints_%t.pvtu', freq=10, paddingamount=0)
 
-      # create a new 'Parallel Image Data Writer'
-      parallelImageDataWriter1 = servermanager.writers.XMLPImageDataWriter(Input=calculator1)
+      # create a new 'Parallel PolyData Writer'
+      parallelPolyDataWriter2 = servermanager.writers.XMLPPolyDataWriter(Input=tTKCinemaWriter2)
 
       # register the writer with coprocessor
       # and provide it with information such as the filename to use,
       # how frequently to write the data, etc.
-      coprocessor.RegisterWriter(parallelImageDataWriter1, filename='data/catalyst/sim_%t.pvti', freq=100, paddingamount=0)
+      coprocessor.RegisterWriter(parallelPolyDataWriter2, filename='data/catalyst/sim_%t.pvtp', freq=10, paddingamount=0)
 
-      topoCompressionWriter = servermanager.writers.TTKTopologicalCompressionWriter(
-          Input=calculator1
-      )
-      topoCompressionWriter.ScalarField = 'Result'
-      topoCompressionWriter.ZFPbitbudgetextra = 1
+      if False:
+        topoCompressionWriter = servermanager.writers.TTKTopologicalCompressionWriter(
+            Input=calculator1
+        )
+        topoCompressionWriter.ScalarField = 'Result'
+        topoCompressionWriter.ZFPbitbudgetextra = 1
 
-      coprocessor.RegisterWriter(topoCompressionWriter, filename='data/comp_%t.ttk', freq=10)
+        coprocessor.RegisterWriter(topoCompressionWriter, filename='data/catalyst/comp_%t.ttk', freq=10)
 
       # ----------------------------------------------------------------
       # finally, restore active source
