@@ -58,12 +58,6 @@ def CreateCoProcessor():
             calculator1 = Calculator(Input=particles)
             calculator1.Function = "mag(B)"
 
-            # create a new 'TTK CinemaWriter'
-            tTKCinemaWriter2 = TTKCinemaWriter(
-                Input=calculator1, DatabasePath="data/cin2.cdb"
-            )
-            tTKCinemaWriter2.OverrideDatabase = 0
-
             # create a new 'TTK ScalarFieldNormalizer'
             tTKScalarFieldNormalizer1 = TTKScalarFieldNormalizer(Input=calculator1)
             tTKScalarFieldNormalizer1.ScalarField = "Result"
@@ -94,57 +88,6 @@ def CreateCoProcessor():
                 parallelPolyDataWriter1,
                 filename="data/catalyst/ph_%t.pvtp",
                 freq=10,
-                paddingamount=0,
-            )
-
-            # create a new 'Threshold'
-            threshold1 = Threshold(Input=tTKPersistenceDiagram1)
-            threshold1.Scalars = ["CELLS", "Persistence"]
-            threshold1.ThresholdRange = [0.01, 0.9999999999999999]
-
-            # create a new 'TTK TopologicalSimplification'
-            tTKTopologicalSimplification1 = TTKTopologicalSimplification(
-                Domain=tTKScalarFieldNormalizer1, Constraints=threshold1
-            )
-            tTKTopologicalSimplification1.ScalarField = "Result"
-            tTKTopologicalSimplification1.InputOffsetField = "Result"
-            tTKTopologicalSimplification1.Vertexidentifierfield = "Birth"
-            tTKTopologicalSimplification1.OutputOffsetScalarField = ""
-
-            # create a new 'TTK ScalarFieldCriticalPoints'
-            tTKScalarFieldCriticalPoints1 = TTKScalarFieldCriticalPoints(
-                Input=tTKTopologicalSimplification1
-            )
-            tTKScalarFieldCriticalPoints1.ScalarField = "Result"
-            tTKScalarFieldCriticalPoints1.InputOffsetfield = "Result"
-
-            # create a new 'Parallel UnstructuredGrid Writer'
-            parallelUnstructuredGridWriter1 = servermanager.writers.XMLPUnstructuredGridWriter(
-                Input=tTKScalarFieldCriticalPoints1
-            )
-
-            # register the writer with coprocessor
-            # and provide it with information such as the filename to use,
-            # how frequently to write the data, etc.
-            coprocessor.RegisterWriter(
-                parallelUnstructuredGridWriter1,
-                filename="data/catalyst/critPoints_%t.pvtu",
-                freq=100,
-                paddingamount=0,
-            )
-
-            # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter2 = servermanager.writers.XMLPPolyDataWriter(
-                Input=tTKCinemaWriter2
-            )
-
-            # register the writer with coprocessor
-            # and provide it with information such as the filename to use,
-            # how frequently to write the data, etc.
-            coprocessor.RegisterWriter(
-                parallelPolyDataWriter2,
-                filename="data/catalyst/ph2_%t.pvtp",
-                freq=100,
                 paddingamount=0,
             )
 
