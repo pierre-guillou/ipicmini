@@ -151,3 +151,5 @@ clusterIdPWF.ScalarRangeInitialized = 1
 # finally, restore active source
 SetActiveSource(tableToPoints1)
 # ----------------------------------------------------------------
+
+SaveData("data/clustering.vtu", CleantoGrid(Input=tableToPoints1))
