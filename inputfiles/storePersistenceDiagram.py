@@ -58,6 +58,30 @@ def CreateCoProcessor():
             calculator1 = Calculator(Input=particles)
             calculator1.Function = "mag(B)"
 
+            # create a new 'TTK CinemaWriter'
+            tTKCinemaWriter2 = TTKCinemaWriter(
+                Input=calculator1, DatabasePath="data/tcomp.cdb"
+            )
+            tTKCinemaWriter2.OverrideDatabase = 0
+            tTKCinemaWriter2.UseTopologicalCompression = 1
+            tTKCinemaWriter2.ScalarField = "Result"
+            tTKCinemaWriter2.ZFPbitbudgetextra = 1
+
+            # create a new 'Parallel PolyData Writer'
+            parallelPolyDataWriter2 = servermanager.writers.XMLPPolyDataWriter(
+                Input=tTKCinemaWriter2
+            )
+
+            # register the writer with coprocessor
+            # and provide it with information such as the filename to use,
+            # how frequently to write the data, etc.
+            coprocessor.RegisterWriter(
+                parallelPolyDataWriter2,
+                filename="data/catalyst/tc_%t.pvtp",
+                freq=50,
+                paddingamount=0,
+            )
+
             # create a new 'TTK ScalarFieldNormalizer'
             tTKScalarFieldNormalizer1 = TTKScalarFieldNormalizer(Input=calculator1)
             tTKScalarFieldNormalizer1.ScalarField = "Result"
@@ -72,7 +96,7 @@ def CreateCoProcessor():
 
             # create a new 'TTK CinemaWriter'
             tTKCinemaWriter1 = TTKCinemaWriter(
-                Input=tTKPersistenceDiagram1, DatabasePath="data/cinema.cdb"
+                Input=tTKPersistenceDiagram1, DatabasePath="data/pdiags.cdb"
             )
             tTKCinemaWriter1.OverrideDatabase = 0
 
@@ -86,7 +110,7 @@ def CreateCoProcessor():
             # how frequently to write the data, etc.
             coprocessor.RegisterWriter(
                 parallelPolyDataWriter1,
-                filename="data/catalyst/ph_%t.pvtp",
+                filename="data/catalyst/pd_%t.pvtp",
                 freq=10,
                 paddingamount=0,
             )
@@ -104,7 +128,7 @@ def CreateCoProcessor():
 
     coprocessor = CoProcessor()
     # these are the frequencies at which the coprocessor updates.
-    freqs = {"particles": [1, 10, 100]}
+    freqs = {"particles": [10, 50]}
     coprocessor.SetUpdateFrequencies(freqs)
     if requestSpecificArrays:
         arrays = []
