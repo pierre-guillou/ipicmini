@@ -49,7 +49,7 @@ add_library(
 target_link_libraries(
         iPICmini
         iPIC3Dlib
-	${MPI_C_LIBRARIES}
+	${MPI_CXX_LIBRARIES}
 	catalystAdaptor
 )
 
