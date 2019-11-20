@@ -47,7 +47,7 @@ SetActiveView(renderView1)
 # ----------------------------------------------------------------
 
 # create a new 'TTK CinemaReader'
-tTKCinemaReader1 = TTKCinemaReader(DatabasePath='data/cinema.cdb')
+tTKCinemaReader1 = TTKCinemaReader(DatabasePath='data/pdiags.cdb')
 
 # create a new 'TTK CinemaProductReader'
 tTKCinemaProductReader1 = TTKCinemaProductReader(Input=tTKCinemaReader1)
