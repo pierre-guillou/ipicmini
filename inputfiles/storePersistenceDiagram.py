@@ -65,7 +65,6 @@ def CreateCoProcessor():
             tTKCinemaWriter2.OverrideDatabase = 0
             tTKCinemaWriter2.UseTopologicalCompression = 1
             tTKCinemaWriter2.ScalarField = "Result"
-            tTKCinemaWriter2.ZFPbitbudgetextra = 1
 
             # create a new 'Parallel PolyData Writer'
             parallelPolyDataWriter2 = servermanager.writers.XMLPPolyDataWriter(
