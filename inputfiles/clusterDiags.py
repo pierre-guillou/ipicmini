@@ -14,9 +14,8 @@ from paraview.simple import *
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
-LoadPlugin(
-    "/usr/local/lib/plugins/libTopologyToolKit.so", ns=globals()
-)
+import os
+LoadPlugin(os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", ns=globals())
 
 # Create a new 'Render View'
 renderView1 = CreateView('RenderView')

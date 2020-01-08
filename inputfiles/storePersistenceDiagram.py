@@ -28,7 +28,8 @@ from paraview.simple import (Calculator, SetActiveSource, Threshold,
                              servermanager)
 
 # Load TTK plugin
-paraview.simple.LoadPlugin("/usr/local/lib/plugins/libTopologyToolKit.so", ns=globals())
+import os
+paraview.simple.LoadPlugin(os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", ns=globals())
 
 
 # ----------------------- CoProcessor definition -----------------------
@@ -62,12 +63,11 @@ def CreateCoProcessor():
             tTKCinemaWriter2 = TTKCinemaWriter(
                 Input=calculator1, DatabasePath="data/tcomp.cdb"
             )
-            tTKCinemaWriter2.OverrideDatabase = 0
-            tTKCinemaWriter2.UseTopologicalCompression = 1
+            tTKCinemaWriter2.Storeas = 2
             tTKCinemaWriter2.ScalarField = "Result"
 
             # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter2 = servermanager.writers.XMLPPolyDataWriter(
+            parallelPolyDataWriter2 = servermanager.writers.XMLPImageDataWriter(
                 Input=tTKCinemaWriter2
             )
 
@@ -97,10 +97,9 @@ def CreateCoProcessor():
             tTKCinemaWriter1 = TTKCinemaWriter(
                 Input=tTKPersistenceDiagram1, DatabasePath="data/pdiags.cdb"
             )
-            tTKCinemaWriter1.OverrideDatabase = 0
 
             # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter1 = servermanager.writers.XMLPPolyDataWriter(
+            parallelPolyDataWriter1 = servermanager.writers.XMLPImageDataWriter(
                 Input=tTKCinemaWriter1
             )
 
