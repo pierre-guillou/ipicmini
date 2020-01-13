@@ -33,6 +33,15 @@
 #define MAX_ASSERT_LEVEL 2
 #endif
 
+void eprintf_fileLine(FILE * fptr, const char *type, const char *func,
+  const char *file, int line_number, const char *format, ...);
+
+#ifndef USE_GCC_OPTIMIZATION
+#define builtin_expect(a,b) (a)
+#else
+#define builtin_expect(a,b) __builtin_expect(a,b)
+#endif
+
 #ifdef NDEBUG                   // completely turns off assert statements
 
 // if debug is turned off create vacuous versions
@@ -57,9 +66,6 @@
 #define assert_isnum(a) ((void)0)
 
 #else // ifndef NDEBUG
-
-void eprintf_fileLine(FILE * fptr, const char *type, const char *func,
-  const char *file, int line_number, const char *format, ...);
 
 #define dassert_fileLine(e, file, line, func) \
   (void)(eprintf_fileLine(stdout,"ERROR", func, file, line, \
@@ -139,11 +145,6 @@ declare_assert_errmsg(const char *, const char *);
 extern "C" {
   int fcmp(double x1, double x2, double epsilon);
 }
-#ifndef USE_GCC_OPTIMIZATION
-#define builtin_expect(a,b) (a)
-#else
-#define builtin_expect(a,b) __builtin_expect(a,b)
-#endif
 // check whether two numbers are equal within machine precision
 #define assert_not_almost_eq(lhs,rhs,tol) \
   (fcmp(lhs, rhs, tol) \
