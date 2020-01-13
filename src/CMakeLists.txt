@@ -93,8 +93,3 @@ target_compile_definitions(iPIC3Dlib PUBLIC ${IPIC_DEFINITIONS})
 
 ## debug releases have a _d appended to the executable
 set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
-
-message("Which system am I compiling for:")
-message("MYHOSTNAME is ${myhostname}")
-message("CMAKE_SYSTEM_PROCESSOR is ${CMAKE_SYSTEM_PROCESSOR}")
-message("MPI_LIBRARIES is ${MPI_LIBRARIES}")
