@@ -77,7 +77,7 @@ def CreateCoProcessor():
             coprocessor.RegisterWriter(
                 parallelPolyDataWriter2,
                 filename="data/catalyst/tc_%t.pvtp",
-                freq=50,
+                freq=10,
                 paddingamount=0,
             )
 
@@ -99,7 +99,7 @@ def CreateCoProcessor():
             )
 
             # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter1 = servermanager.writers.XMLPImageDataWriter(
+            parallelPolyDataWriter1 = servermanager.writers.XMLPUnstructuredGridWriter(
                 Input=tTKCinemaWriter1
             )
 
@@ -109,7 +109,7 @@ def CreateCoProcessor():
             coprocessor.RegisterWriter(
                 parallelPolyDataWriter1,
                 filename="data/catalyst/pd_%t.pvtp",
-                freq=10,
+                freq=1,
                 paddingamount=0,
             )
 
@@ -126,7 +126,7 @@ def CreateCoProcessor():
 
     coprocessor = CoProcessor()
     # these are the frequencies at which the coprocessor updates.
-    freqs = {"particles": [10, 50]}
+    freqs = {"particles": [1, 10]}
     coprocessor.SetUpdateFrequencies(freqs)
     if requestSpecificArrays:
         arrays = []
