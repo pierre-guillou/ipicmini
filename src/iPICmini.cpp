@@ -30,16 +30,12 @@
 
 using namespace iPic3D;
 
-// mini-app stuff
-// A dictionary of times with times for certain tasks; keys are task names and "total".
-NameDoubleMap cycle_times;
-
 /** Initialize timings. 
  * 
  * Times are stored in a global object timeTasks defined in TimeTasks.h.
  * 
 */
-void initFigures()
+void initFigures(NameDoubleMap &cycle_times)
 {
   int i = 1;
   const char * s;
@@ -56,7 +52,7 @@ void initFigures()
 }
 
 /** Print various figures marking performance. */
-void printFigures(long long int nop)
+void printFigures(long long int nop, NameDoubleMap &cycle_times)
 {
   // Compute total time spent on particles and fields since tasks have been started.
   // It doesn't restart the tasks.
@@ -81,8 +77,12 @@ int main(int argc, char **argv)
     iPic3D::c_Solver ipic_solver;
     ipic_solver.Init(argc, argv);
    
+    // mini-app stuff
+    // A dictionary of times with times for certain tasks; keys are task names and "total".
+    NameDoubleMap cycle_times;
+
     // initialize the mini-app timings
-    initFigures();
+    initFigures(cycle_times);
    
     // Reset the times recorded by timeTasks global object
     timeTasks.resetCycle();
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
       ipic_solver.WriteOutput(i);
    
       // Print the statistics gathered by mini-app
-      printFigures(ipic_solver.get_NOPtotal());
+      printFigures(ipic_solver.get_NOPtotal(), cycle_times);
    
       // print out total time for all tasks
       //timeTasks.print_cycle_times(i);
