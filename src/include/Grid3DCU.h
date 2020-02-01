@@ -29,8 +29,10 @@
 
 #include "arraysfwd.h"
 #include "ipicfwd.h"
-#include "math.h" // for floor
-#include "assert.h"
+
+#include <cassert>
+#include <cmath> // for floor
+#include <vector>
 
 /**
  * Uniform cartesian local grid 3D
@@ -253,16 +255,16 @@ private:
   // number of subdomain cells in a regular (untruncated) subdomain grid
   int num_cells_rr;
   /** node coordinate */
-  pfloat *pfloat_node_xcoord;
-  pfloat *pfloat_node_ycoord;
-  pfloat *pfloat_node_zcoord;
-  double *node_xcoord;
-  double *node_ycoord;
-  double *node_zcoord;
+  std::vector<pfloat> pfloat_node_xcoord{};
+  std::vector<pfloat> pfloat_node_ycoord{};
+  std::vector<pfloat> pfloat_node_zcoord{};
+  std::vector<double> node_xcoord{};
+  std::vector<double> node_ycoord{};
+  std::vector<double> node_zcoord{};
   /** center coordinate */
-  double *center_xcoord;
-  double *center_ycoord;
-  double *center_zcoord;
+  std::vector<double> center_xcoord{};
+  std::vector<double> center_ycoord{};
+  std::vector<double> center_zcoord{};
   /** local grid boundaries coordinate of proper subdomain */
   double xStart, xEnd, yStart, yEnd, zStart, zEnd;
   double xStart_g, yStart_g, zStart_g;

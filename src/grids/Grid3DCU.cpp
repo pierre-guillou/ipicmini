@@ -160,12 +160,12 @@ void Grid3DCU::init_derived_parameters()
   czlast = nzc-1;
 
   // arrays allocation: nodes ---> the first node has index 1, the last has index nxn-2!
-  pfloat_node_xcoord = new pfloat[nxn];
-  pfloat_node_ycoord = new pfloat[nyn];
-  pfloat_node_zcoord = new pfloat[nzn];
-  node_xcoord = new double[nxn];
-  node_ycoord = new double[nyn];
-  node_zcoord = new double[nzn];
+  pfloat_node_xcoord.resize(nxn);
+  pfloat_node_ycoord.resize(nyn);
+  pfloat_node_zcoord.resize(nzn);
+  node_xcoord.resize(nxn);
+  node_ycoord.resize(nyn);
+  node_zcoord.resize(nzn);
   for (int i=0; i<nxn; i++) node_xcoord[i] = xStart + (i - 1) * dx;
   for (int j=0; j<nyn; j++) node_ycoord[j] = yStart + (j - 1) * dy;
   for (int k=0; k<nzn; k++) node_zcoord[k] = zStart + (k - 1) * dz;
@@ -173,9 +173,9 @@ void Grid3DCU::init_derived_parameters()
   for (int j=0; j<nyn; j++) pfloat_node_ycoord[j] = node_ycoord[j];
   for (int k=0; k<nzn; k++) pfloat_node_zcoord[k] = node_zcoord[k];
   // arrays allocation: cells ---> the first cell has index 1, the last has index ncn-2!
-  center_xcoord = new double[nxc];
-  center_ycoord = new double[nyc];
-  center_zcoord = new double[nzc];
+  center_xcoord.resize(nxc);
+  center_ycoord.resize(nyc);
+  center_zcoord.resize(nzc);
   for(int i=0; i<nxc; i++) center_xcoord[i] = .5*(node_xcoord[i]+node_xcoord[i+1]);
   for(int j=0; j<nyc; j++) center_ycoord[j] = .5*(node_ycoord[j]+node_ycoord[j+1]);
   for(int k=0; k<nzc; k++) center_zcoord[k] = .5*(node_zcoord[k]+node_zcoord[k+1]);
@@ -184,14 +184,7 @@ void Grid3DCU::init_derived_parameters()
 }
 
 /** deallocate the local grid */
-Grid3DCU::~Grid3DCU() {
-  delete [] node_xcoord;
-  delete [] node_ycoord;
-  delete [] node_zcoord;
-  delete [] center_xcoord;
-  delete [] center_ycoord;
-  delete [] center_zcoord;
-}
+Grid3DCU::~Grid3DCU() {}
 
 /** print the local grid info */
 void Grid3DCU::print()const
