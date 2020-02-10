@@ -50,7 +50,6 @@ tTKCinemaReader1 = TTKCinemaReader(DatabasePath='data/pdiags.cdb')
 
 # create a new 'TTK CinemaProductReader'
 tTKCinemaProductReader1 = TTKCinemaProductReader(Input=tTKCinemaReader1)
-tTKCinemaProductReader1.FilepathColumn = [None, 'FILE']
 
 # create a new 'TTK PersistenceDiagramClustering'
 tTKPersistenceDiagramClustering1 = TTKPersistenceDiagramClustering(Input=tTKCinemaProductReader1)
