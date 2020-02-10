@@ -54,6 +54,7 @@ tTKCinemaProductReader1 = TTKCinemaProductReader(Input=tTKCinemaReader1)
 # create a new 'TTK PersistenceDiagramClustering'
 tTKPersistenceDiagramClustering1 = TTKPersistenceDiagramClustering(Input=tTKCinemaProductReader1)
 tTKPersistenceDiagramClustering1.Numberofclusters = 3
+tTKPersistenceDiagramClustering1.Maximalcomputationtimes = 10.0
 tTKPersistenceDiagramClustering1.OutputaDistanceMatrix = 1
 
 # find source
