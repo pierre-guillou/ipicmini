@@ -64,6 +64,7 @@ tTKDimensionReduction1 = TTKDimensionReduction(Input=OutputPort(tTKPersistenceDi
     ModulePath='default')
 tTKDimensionReduction1.SelectFieldswithaRegexp = 1
 tTKDimensionReduction1.Regexp = 'Diagram.*'
+tTKDimensionReduction1.Components = 3
 tTKDimensionReduction1.InputIsaDistanceMatrix = 1
 tTKDimensionReduction1.UseAllCores = 0
 
@@ -71,7 +72,7 @@ tTKDimensionReduction1.UseAllCores = 0
 tableToPoints1 = TableToPoints(Input=tTKDimensionReduction1)
 tableToPoints1.XColumn = 'Component_0'
 tableToPoints1.YColumn = 'Component_1'
-tableToPoints1.ZColumn = 'Component_0'
+tableToPoints1.ZColumn = 'Component_2'
 
 # ----------------------------------------------------------------
 # setup the visualization in view 'renderView1'
