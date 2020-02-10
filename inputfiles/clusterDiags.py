@@ -65,6 +65,7 @@ tTKDimensionReduction1 = TTKDimensionReduction(Input=OutputPort(tTKPersistenceDi
 tTKDimensionReduction1.SelectFieldswithaRegexp = 1
 tTKDimensionReduction1.Regexp = 'Diagram.*'
 tTKDimensionReduction1.InputIsaDistanceMatrix = 1
+tTKDimensionReduction1.UseAllCores = 0
 
 # create a new 'Table To Points'
 tableToPoints1 = TableToPoints(Input=tTKDimensionReduction1)
