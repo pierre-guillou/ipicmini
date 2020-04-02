@@ -7,18 +7,11 @@ CinemaFilter.SQLStatement = "SELECT * FROM InputTable0 WHERE TimeStep % 2 = 0"
 ProductReader = TTKCinemaProductReader(Input=CinemaFilter)
 
 # get a distance matrix from these diagrams
-PDClustering = TTKPersistenceDiagramClustering(Input=ProductReader)
-PDClustering.Numberofclusters = 3
-PDClustering.Maximalcomputationtimes = 10.0
-PDClustering.OutputaDistanceMatrix = 1
-
-# find source
-PDClustering_1 = FindSource("TTKPersistenceDiagramClustering1")
+DistMat = TTKPersistenceDiagramDistanceMatrix(Input=ProductReader)
+DistMat.NumberofPairs = 20
 
 # reduce the distance matrix to 3D coordinates
-DimRed = TTKDimensionReduction(
-    Input=OutputPort(PDClustering_1, 3), ModulePath="default"
-)
+DimRed = TTKDimensionReduction(Input=DistMat)
 DimRed.SelectFieldswithaRegexp = 1
 DimRed.Regexp = "Diagram.*"
 DimRed.Components = 3
