@@ -76,7 +76,7 @@ def CreateCoProcessor():
             # how frequently to write the data, etc.
             coprocessor.RegisterWriter(
                 parallelPolyDataWriter2,
-                filename="data/catalyst/tc_%t.pvtp",
+                filename="data/catalyst/tmp.pvtp",
                 freq=10,
                 paddingamount=0,
             )
@@ -108,7 +108,7 @@ def CreateCoProcessor():
             # how frequently to write the data, etc.
             coprocessor.RegisterWriter(
                 parallelPolyDataWriter1,
-                filename="data/catalyst/pd_%t.pvtp",
+                filename="data/catalyst/tmp.pvtp",
                 freq=1,
                 paddingamount=0,
             )
