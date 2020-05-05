@@ -180,14 +180,14 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   dataDescription->AddInput(InputName);
   dataDescription->SetTimeData(time, timeStep);
 
-  auto fd = vtkSmartPointer<vtkIntArray>::New();
-  double ts[1] = {static_cast<double>(timeStep)};
-  fd->SetName("TimeStep");
-  fd->SetNumberOfComponents(1);
-  fd->InsertNextTuple(ts);
-  VTKGrid->GetFieldData()->AddArray(fd);
+  vtkNew<vtkIntArray> fd1{};
+  const auto ts{static_cast<double>(timeStep)};
+  fd1->SetName("TimeStep");
+  fd1->SetNumberOfComponents(1);
+  fd1->InsertNextTuple(&ts);
+  VTKGrid->GetFieldData()->AddArray(fd1);
 
-  auto fd2 = vtkSmartPointer<vtkStringArray>::New();
+  vtkNew<vtkStringArray> fd2{};
   fd2->SetName("CaseName");
   fd2->SetNumberOfComponents(1);
   fd2->InsertNextValue(_sim_params->getCase().c_str());
