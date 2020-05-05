@@ -193,6 +193,18 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   fd2->InsertNextValue(_sim_params->getCase().c_str());
   VTKGrid->GetFieldData()->AddArray(fd2);
 
+  vtkNew<vtkDoubleArray> fd3 {};
+  fd3->SetName("B0x");
+  fd3->SetNumberOfComponents(1);
+  fd3->InsertNextValue(_sim_params->getB0x());
+  VTKGrid->GetFieldData()->AddArray(fd3);
+
+  vtkNew<vtkDoubleArray> fd4 {};
+  fd4->SetName("ns");
+  fd4->SetNumberOfComponents(1);
+  fd4->InsertNextValue(_sim_params->getNs());
+  VTKGrid->GetFieldData()->AddArray(fd4);
+
   if (Processor->RequestDataDescription(dataDescription) != 0)
   {
     vtkCPInputDataDescription* idd = dataDescription->GetInputDescriptionByName(InputName);
