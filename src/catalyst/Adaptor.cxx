@@ -31,7 +31,7 @@ int _dy;
 int _start_z;
 int _nz;
 int _dz;
-std::string _caseName{};
+const Collective *_sim_params{};
 
 
 //----------------------------------------------------------------------------
@@ -113,10 +113,9 @@ namespace Adaptor
 {
 
 //----------------------------------------------------------------------------
-void Initialize(const char *script, const int start_x, const int start_y,
+void Initialize(const Collective *sim_params, const int start_x, const int start_y,
                 const int start_z, const int nx, const int ny, const int nz,
-                const double dx, const double dy, const double dz,
-                const std::string caseName) {
+                const double dx, const double dy, const double dz) {
   if (Processor == NULL) {
     Processor = vtkCPProcessor::New();
     Processor->Initialize();
@@ -126,7 +125,7 @@ void Initialize(const char *script, const int start_x, const int start_y,
     Processor->RemoveAllPipelines();
   }
   vtkNew<vtkCPPythonScriptPipeline> pipeline;
-  pipeline->Initialize(script);
+  pipeline->Initialize(sim_params->getParaviewScriptPath().c_str());
   Processor->AddPipeline(pipeline);
 
   _start_x = start_x;
@@ -139,7 +138,7 @@ void Initialize(const char *script, const int start_x, const int start_y,
   _nz = nz;
   _dz = dz;
 
-  _caseName = caseName;
+  _sim_params = sim_params;
 
   if (VTKGrid == NULL)
   {
@@ -191,7 +190,7 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   auto fd2 = vtkSmartPointer<vtkStringArray>::New();
   fd2->SetName("CaseName");
   fd2->SetNumberOfComponents(1);
-  fd2->InsertNextValue(_caseName.c_str());
+  fd2->InsertNextValue(_sim_params->getCase().c_str());
   VTKGrid->GetFieldData()->AddArray(fd2);
 
   if (Processor->RequestDataDescription(dataDescription) != 0)

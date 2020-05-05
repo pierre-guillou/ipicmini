@@ -3,14 +3,15 @@
 
 // For iPic3D arrays
 #include "../include/Alloc.h"
+// Access to simulation parameters
+#include "../include/Collective.h"
 
 #include <string>
 
 namespace Adaptor {
-void Initialize(const char *script, const int start_x, const int start_y,
+void Initialize(const Collective *sim_params, const int start_x, const int start_y,
                 const int start_z, const int nx, const int ny, const int nz,
-                const double dx, const double dy, const double dz,
-                std::string caseName);
+                const double dx, const double dy, const double dz);
 
 void Finalize(const std::string &script = "");
 

@@ -261,7 +261,7 @@ int c_Solver::Init(int argc, char **argv) {
   Qremoved = new double[ns];
 
 #ifdef USE_CATALYST
-  Adaptor::Initialize((col->getParaviewScriptPath()).c_str(), \
+  Adaptor::Initialize(col, \
 		  (int)(grid->getXstart()/grid->getDX()), \
 		  (int)(grid->getYstart()/grid->getDY()), \
 		  (int)(grid->getZstart()/grid->getDZ()), \
@@ -270,8 +270,7 @@ int c_Solver::Init(int argc, char **argv) {
 		  grid->getNZN(),
 		  grid->getDX(),
 		  grid->getDY(),
-		  grid->getDZ(),
-		  col->getCase());
+		  grid->getDZ());
 #endif
 
   my_clock = new Timing(myrank);
