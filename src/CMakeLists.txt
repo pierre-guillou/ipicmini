@@ -91,5 +91,11 @@ target_include_directories(iPIC3Dlib
 
 target_compile_definitions(iPIC3Dlib PUBLIC ${IPIC_DEFINITIONS})
 
+# Find OpenMP
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+  target_link_libraries(iPIC3Dlib PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 ## debug releases have a _d appended to the executable
 set_target_properties(iPICmini PROPERTIES DEBUG_POSTFIX "_d")
