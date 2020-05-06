@@ -27,11 +27,6 @@ t2p.KeepAllDataArrays = 1
 tetra = Tetrahedralize(Input=t2p)
 
 # generate a heat map from distance matrix
-hm = TTKMatrixToHeatMap(Input=DistMat)
-hm.SelectFieldswithaRegexp = 1
-hm.Regexp = "Diagram.*"
-
 # save output distance matrix, heat map and point cloud
 SaveData("data/distmat.csv", Input=DimRed)
-SaveData("data/heatmap.vtu", CleantoGrid(Input=hm))
 SaveData("data/distmat.vtu", CleantoGrid(Input=tetra))
