@@ -1,6 +1,9 @@
 #include "Adaptor.h"
 
 #include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <vtkCPDataDescription.h>
 #include <vtkCPInputDataDescription.h>
@@ -193,17 +196,16 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   fd1->InsertNextTuple(&ts);
   VTKGrid->GetFieldData()->AddArray(fd1);
 
-  vtkNew<vtkDoubleArray> fd3 {};
-  fd3->SetName("B0x");
-  fd3->SetNumberOfComponents(1);
-  fd3->InsertNextValue(_sim_params->getB0x());
-  VTKGrid->GetFieldData()->AddArray(fd3);
+  std::vector<std::pair<std::string, double>> params{
+      {"B0x", _sim_params->getB0x()}, {"ns", _sim_params->getNs()}};
 
-  vtkNew<vtkDoubleArray> fd4 {};
-  fd4->SetName("ns");
-  fd4->SetNumberOfComponents(1);
-  fd4->InsertNextValue(_sim_params->getNs());
-  VTKGrid->GetFieldData()->AddArray(fd4);
+  for (const auto &pair : params) {
+    vtkNew<vtkDoubleArray> fd{};
+    fd->SetNumberOfComponents(1);
+    fd->SetName(pair.first.c_str());
+    fd->InsertNextValue(pair.second);
+    VTKGrid->GetFieldData()->AddArray(fd);
+  }
 
   if (Processor->RequestDataDescription(dataDescription) != 0)
   {
