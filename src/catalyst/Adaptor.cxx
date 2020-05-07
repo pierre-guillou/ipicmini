@@ -190,10 +190,9 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx, arr3_double B
   VTKGrid->GetFieldData()->AddArray(fd0);
 
   vtkNew<vtkIntArray> fd1{};
-  const auto ts{static_cast<double>(timeStep)};
   fd1->SetName("TimeStep");
   fd1->SetNumberOfComponents(1);
-  fd1->InsertNextTuple(&ts);
+  fd1->InsertNextValue(timeStep);
   VTKGrid->GetFieldData()->AddArray(fd1);
 
   std::vector<std::pair<std::string, double>> params{
