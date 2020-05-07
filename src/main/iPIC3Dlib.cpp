@@ -55,10 +55,6 @@ using namespace iPic3D;
 
 c_Solver::~c_Solver()
 {
-#ifdef USE_CATALYST
-  Adaptor::Finalize(col->getParaviewFinalScriptPath());
-#endif
-
   delete col; // configuration parameters ("collectiveIO")
   delete vct; // process topology
   delete grid; // grid
@@ -77,6 +73,10 @@ c_Solver::~c_Solver()
     }
     free(part);
   }
+
+#ifdef USE_CATALYST
+  Adaptor::Finalize();
+#endif
 
   delete [] Ke;
   delete [] momentum;

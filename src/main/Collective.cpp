@@ -206,7 +206,6 @@ void Collective::ReadInput(string inputfile) {
     DiagnosticsOutputCycle = config.read < int >("DiagnosticsOutputCycle", FieldOutputCycle);
     CallFinalize = config.read < bool >("CallFinalize", true);
     ParaviewScriptPath     =   config.read <string>("ParaviewScriptPath", "");
-    ParaviewFinalizeScriptPath     =   config.read <string>("ParaviewFinalizeScriptPath", "");
   }
 
   //read everything from input file, if restart is true, overwrite the setting - bug fixing

@@ -158,12 +158,8 @@ void Initialize(const Collective *sim_params, const int start_x, const int start
 }
 
 //----------------------------------------------------------------------------
-void Finalize(const std::string &script)
+void Finalize()
 {
-  if (!script.empty()) {
-    vtkNew<vtkCPPythonScriptPipeline>()->Initialize(script.c_str());
-  }
-
   if (Processor)
   {
     Processor->Delete();

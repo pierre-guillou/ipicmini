@@ -207,7 +207,6 @@ class Collective
     // Catalyst stuff
 
     string getParaviewScriptPath()const{return ParaviewScriptPath;}
-    const string& getParaviewFinalScriptPath()const{return ParaviewFinalizeScriptPath;}
 
   private:
     /*! inputfile */
@@ -440,7 +439,6 @@ class Collective
 
     /** The path to the Python script produced by ParaView */
     string ParaviewScriptPath;
-    string ParaviewFinalizeScriptPath;
 };
 typedef Collective CollectiveIO;
 
