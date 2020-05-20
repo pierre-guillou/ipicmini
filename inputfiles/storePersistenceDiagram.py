@@ -58,12 +58,8 @@ def CreateCoProcessor():
                 ppdwriter0, filename="data/catalyst/tmp.pvtp", freq=10, paddingamount=0,
             )
 
-            # normalize the scalar field
-            scalarNorm = TTKScalarFieldNormalizer(Input=calc)
-            scalarNorm.ScalarField = "Result"
-
             # generate a persistence diagram
-            pDiag = TTKPersistenceDiagram(Input=scalarNorm)
+            pDiag = TTKPersistenceDiagram(Input=calc)
             pDiag.ScalarField = "Result"
             pDiag.EmbedinDomain = 0
 
