@@ -38,8 +38,7 @@ const Collective *_sim_params{};
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void UpdateVTKAttributes(vtkCPInputDataDescription *idd, arr3_double Bx,
-                         arr3_double By, arr3_double Bz) {
+void UpdateVTKAttributes(vtkCPInputDataDescription *idd, EMfields3D *EMf) {
   // I am not sure whether we need to do this check
   if (idd->IsFieldNeeded("B", vtkDataObject::POINT) == true) {
     // Create a VTK object representing magnetic field array
@@ -64,6 +63,10 @@ void UpdateVTKAttributes(vtkCPInputDataDescription *idd, arr3_double Bx,
 
     // Array of grid's dimensions
     int *dims = VTKGrid->GetDimensions();
+
+    auto Bx = EMf->getBx();
+    auto By = EMf->getBy();
+    auto Bz = EMf->getBz();
 
     // Cycle over all VTK grid's points, get their indices and copy the data.
     // We want to have only one cycle over point's ID to efficiently use
@@ -104,10 +107,9 @@ void UpdateVTKAttributes(vtkCPInputDataDescription *idd, arr3_double Bx,
 }
 
 //----------------------------------------------------------------------------
-void BuildVTKDataStructures(vtkCPInputDataDescription *idd, arr3_double Bx,
-                            arr3_double By, arr3_double Bz) {
+void BuildVTKDataStructures(vtkCPInputDataDescription *idd, EMfields3D *EMf) {
   // feed data to grid
-  UpdateVTKAttributes(idd, Bx, By, Bz);
+  UpdateVTKAttributes(idd, EMf);
 }
 } // namespace
 
@@ -165,8 +167,7 @@ void Finalize() {
 }
 
 //----------------------------------------------------------------------------
-void CoProcess(double time, unsigned int timeStep, arr3_double Bx,
-               arr3_double By, arr3_double Bz) {
+void CoProcess(double time, unsigned int timeStep, EMfields3D *EMf) {
   vtkNew<vtkCPDataDescription> dataDescription;
   dataDescription->AddInput(InputName);
   dataDescription->SetTimeData(time, timeStep);
@@ -197,7 +198,7 @@ void CoProcess(double time, unsigned int timeStep, arr3_double Bx,
   if (Processor->RequestDataDescription(dataDescription) != 0) {
     vtkCPInputDataDescription *idd =
         dataDescription->GetInputDescriptionByName(InputName);
-    BuildVTKDataStructures(idd, Bx, By, Bz);
+    BuildVTKDataStructures(idd, EMf);
     idd->SetGrid(VTKGrid);
     Processor->CoProcess(dataDescription);
   }

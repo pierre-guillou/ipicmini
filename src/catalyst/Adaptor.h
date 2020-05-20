@@ -5,6 +5,8 @@
 #include "../include/Alloc.h"
 // Access to simulation parameters
 #include "../include/Collective.h"
+// Access to physical quantities
+#include "../include/EMfields3D.h"
 
 namespace Adaptor {
 void Initialize(const Collective *sim_params, const int start_x,
@@ -14,8 +16,7 @@ void Initialize(const Collective *sim_params, const int start_x,
 
 void Finalize();
 
-void CoProcess(double time, unsigned int timeStep, arr3_double Bx,
-               arr3_double By, arr3_double Bz);
+void CoProcess(double time, unsigned int timeStep, EMfields3D *EMf);
 } // namespace Adaptor
 
 #endif
