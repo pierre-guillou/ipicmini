@@ -206,7 +206,9 @@ void CoProcess(double time, unsigned int timeStep, EMfields3D *EMf) {
   VTKGrid->GetFieldData()->AddArray(fd1);
 
   std::vector<std::pair<std::string, double>> params{
-      {"B0x", _sim_params->getB0x()}, {"ns", _sim_params->getNs()}};
+      {"B0x", _sim_params->getB0x()},
+      {"B0z", _sim_params->getB0z()},
+      {"ns", _sim_params->getNs()}};
 
   for (const auto &pair : params) {
     vtkNew<vtkDoubleArray> fd{};
