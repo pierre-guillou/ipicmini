@@ -22,14 +22,16 @@ make_cinema_table = False
 # paraview version 5.6.0
 # --------------------------------------------------------------
 
-import paraview.simple
-from paraview import coprocessing
-from paraview.simple import (Calculator, SetActiveSource, Threshold,
-                             servermanager)
-
 # Load TTK plugin
 import os
-paraview.simple.LoadPlugin(os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", ns=globals())
+
+import paraview.simple
+from paraview import coprocessing
+from paraview.simple import servermanager as sm
+
+paraview.simple.LoadPlugin(
+    os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", ns=globals()
+)
 
 
 # ----------------------- CoProcessor definition -----------------------
@@ -38,85 +40,41 @@ paraview.simple.LoadPlugin(os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", 
 def CreateCoProcessor():
     def _CreatePipeline(coprocessor, datadescription):
         class Pipeline:
-            # state file generated using paraview version 5.6.0
-
-            # ----------------------------------------------------------------
-            # setup the data processing pipelines
-            # ----------------------------------------------------------------
-
-            # trace generated using paraview version 5.6.0
-            #
-            # To ensure correct image size when batch processing, please search
-            # for and uncomment the line `# renderView*.ViewSize = [*,*]`
-
-            #### disable automatic camera reset on 'Show'
-            paraview.simple._DisableFirstRenderCameraReset()
-
             # create a producer from a simulation input
             particles = coprocessor.CreateProducer(datadescription, "particles")
 
-            # create a new 'Calculator'
-            calculator1 = Calculator(Input=particles)
-            calculator1.Function = "mag(B)"
+            # compute the magnitude of the magnetic field
+            calc = Calculator(Input=particles)
+            calc.Function = "mag(B)"
 
-            # create a new 'TTK CinemaWriter'
-            tTKCinemaWriter2 = TTKCinemaWriter(
-                Input=calculator1, DatabasePath="data/tcomp.cdb"
-            )
-            tTKCinemaWriter2.Storeas = 2
-            tTKCinemaWriter2.ScalarField = "Result"
+            # store a compressed version inside a Cinema Database
+            cineWriter0 = TTKCinemaWriter(Input=calc, DatabasePath="data/tcomp.cdb")
+            cineWriter0.Storeas = 2
+            cineWriter0.ScalarField = "Result"
 
-            # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter2 = servermanager.writers.XMLPImageDataWriter(
-                Input=tTKCinemaWriter2
-            )
-
-            # register the writer with coprocessor
-            # and provide it with information such as the filename to use,
-            # how frequently to write the data, etc.
+            # trigger this branch of the pipeline
+            ppdwriter0 = sm.writers.XMLPImageDataWriter(Input=cineWriter0)
             coprocessor.RegisterWriter(
-                parallelPolyDataWriter2,
-                filename="data/catalyst/tmp.pvtp",
-                freq=10,
-                paddingamount=0,
+                ppdwriter0, filename="data/catalyst/tmp.pvtp", freq=10, paddingamount=0,
             )
 
-            # create a new 'TTK ScalarFieldNormalizer'
-            tTKScalarFieldNormalizer1 = TTKScalarFieldNormalizer(Input=calculator1)
-            tTKScalarFieldNormalizer1.ScalarField = "Result"
+            # normalize the scalar field
+            scalarNorm = TTKScalarFieldNormalizer(Input=calc)
+            scalarNorm.ScalarField = "Result"
 
-            # create a new 'TTK PersistenceDiagram'
-            tTKPersistenceDiagram1 = TTKPersistenceDiagram(
-                Input=tTKScalarFieldNormalizer1
-            )
-            tTKPersistenceDiagram1.ScalarField = "Result"
-            tTKPersistenceDiagram1.InputOffsetField = "Result"
-            tTKPersistenceDiagram1.EmbedinDomain = 0
+            # generate a persistence diagram
+            pDiag = TTKPersistenceDiagram(Input=scalarNorm)
+            pDiag.ScalarField = "Result"
+            pDiag.EmbedinDomain = 0
 
-            # create a new 'TTK CinemaWriter'
-            tTKCinemaWriter1 = TTKCinemaWriter(
-                Input=tTKPersistenceDiagram1, DatabasePath="data/pdiags.cdb"
-            )
+            # store inside a Cinema Database
+            cineWriter1 = TTKCinemaWriter(Input=pDiag, DatabasePath="data/pdiags.cdb")
 
-            # create a new 'Parallel PolyData Writer'
-            parallelPolyDataWriter1 = servermanager.writers.XMLPUnstructuredGridWriter(
-                Input=tTKCinemaWriter1
-            )
-
-            # register the writer with coprocessor
-            # and provide it with information such as the filename to use,
-            # how frequently to write the data, etc.
+            # trigger this branch of the pipeline
+            ppdwriter1 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter1)
             coprocessor.RegisterWriter(
-                parallelPolyDataWriter1,
-                filename="data/catalyst/tmp.pvtp",
-                freq=1,
-                paddingamount=0,
+                ppdwriter1, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
             )
-
-            # ----------------------------------------------------------------
-            # finally, restore active source
-            SetActiveSource(particles)
-            # ----------------------------------------------------------------
 
         return Pipeline()
 
