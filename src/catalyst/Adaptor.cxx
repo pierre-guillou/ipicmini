@@ -68,19 +68,40 @@ void UpdateVTKAttributes(vtkCPInputDataDescription *idd, EMfields3D *EMf) {
     auto By = EMf->getBy();
     auto Bz = EMf->getBz();
 
+    auto rhons = EMf->getRHOns();
+
+    // electric charge density for species 0 and 1
+    vtkNew<vtkDoubleArray> rhons0{}, rhons1{};
+    rhons0->SetName("rhons0");
+    rhons0->SetNumberOfComponents(1);
+    rhons0->SetNumberOfTuples(VTKGrid->GetNumberOfPoints());
+    vtk_point_data->AddArray(rhons0);
+
+    if (rhons.dim1() > 1) {
+      rhons1->SetName("rhons1");
+      rhons1->SetNumberOfComponents(1);
+      rhons1->SetNumberOfTuples(VTKGrid->GetNumberOfPoints());
+      vtk_point_data->AddArray(rhons1);
+    }
+
     // Cycle over all VTK grid's points, get their indices and copy the data.
     // We want to have only one cycle over point's ID to efficiently use
     // multi-threading.
-    for (long p = 0; p < VTKGrid->GetNumberOfPoints(); ++p) {
+    for (vtkIdType p = 0; p < VTKGrid->GetNumberOfPoints(); ++p) {
       // Get cells's indices i, j , k
-      unsigned long k = p / (dims[0] * dims[1]);
-      unsigned long j = (p - k * dims[0] * dims[1]) / dims[0];
-      unsigned long i = p - k * dims[0] * dims[1] - j * dims[0];
+      const size_t k = p / (dims[0] * dims[1]);
+      const size_t j = (p - k * dims[0] * dims[1]) / dims[0];
+      const size_t i = p - k * dims[0] * dims[1] - j * dims[0];
 
       // CAUTION!!! K should be always zero in the 2D case?
       field_array->SetComponent(p, 0, Bx[i][j][k]);
       field_array->SetComponent(p, 1, By[i][j][k]);
       field_array->SetComponent(p, 2, Bz[i][j][k]);
+
+      rhons0->SetValue(p, rhons[0][i][j][k]);
+      if (rhons.dim1() > 1) {
+        rhons1->SetValue(p, rhons[1][i][j][k]);
+      }
     }
 
     /// Fast way, if memry layout is correct.
