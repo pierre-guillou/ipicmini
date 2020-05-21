@@ -49,6 +49,7 @@ def CreateCoProcessor():
 
             # store a compressed version inside a Cinema Database
             cineWriter0 = TTKCinemaWriter(Input=calc, DatabasePath="data/tcomp.cdb")
+            cineWriter0.ForwardInput = False
             cineWriter0.Storeas = 2
             cineWriter0.ScalarField = "Result"
 
@@ -65,6 +66,7 @@ def CreateCoProcessor():
 
             # store inside a Cinema Database
             cineWriter1 = TTKCinemaWriter(Input=pDiag, DatabasePath="data/pdiags.cdb")
+            cineWriter1.ForwardInput = False
 
             # trigger this branch of the pipeline
             ppdwriter1 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter1)
