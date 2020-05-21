@@ -64,8 +64,12 @@ def CreateCoProcessor():
             arrEd0.TargetAttribute = "Field Data"
             arrEd0.DataString = "ScalarField,mag(B)"
 
+            # normalize scalar field
+            sfn0 = TTKScalarFieldNormalizer(Input=arrEd0)
+            sfn0.ScalarField = "Result"
+
             # generate a persistence diagram
-            pDiag = TTKPersistenceDiagram(Input=arrEd0)
+            pDiag = TTKPersistenceDiagram(Input=sfn0)
             pDiag.ScalarField = "Result"
             pDiag.EmbedinDomain = 0
 
@@ -89,8 +93,12 @@ def CreateCoProcessor():
             arrEd1.TargetAttribute = "Field Data"
             arrEd1.DataString = "ScalarField,Bz"
 
+            # normalize scalar field
+            sfn1 = TTKScalarFieldNormalizer(Input=arrEd1)
+            sfn1.ScalarField = "Result"
+
             # generate the persistence diagram
-            pDiag1 = TTKPersistenceDiagram(Input=arrEd1)
+            pDiag1 = TTKPersistenceDiagram(Input=sfn1)
             pDiag1.ScalarField = "Result"
             pDiag1.EmbedinDomain = 0
 
