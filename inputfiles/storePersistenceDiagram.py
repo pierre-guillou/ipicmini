@@ -59,8 +59,13 @@ def CreateCoProcessor():
                 ppdwriter0, filename="data/catalyst/tmp.pvtp", freq=10, paddingamount=0,
             )
 
+            # annotate data
+            arrEd0 = TTKArrayEditor(Target=calc, Source=None)
+            arrEd0.TargetAttribute = "Field Data"
+            arrEd0.DataString = "ScalarField,mag(B)"
+
             # generate a persistence diagram
-            pDiag = TTKPersistenceDiagram(Input=calc)
+            pDiag = TTKPersistenceDiagram(Input=arrEd0)
             pDiag.ScalarField = "Result"
             pDiag.EmbedinDomain = 0
 
@@ -72,6 +77,31 @@ def CreateCoProcessor():
             ppdwriter1 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter1)
             coprocessor.RegisterWriter(
                 ppdwriter1, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
+            )
+
+            # extract the z component of B (Bz)
+            extrComp = ExtractComponent(Input=particles)
+            extrComp.InputArray = ["POINTS", "B"]
+            extrComp.Component = "Z"
+
+            # annotate data
+            arrEd1 = TTKArrayEditor(Target=extrComp, Source=None)
+            arrEd1.TargetAttribute = "Field Data"
+            arrEd1.DataString = "ScalarField,Bz"
+
+            # generate the persistence diagram
+            pDiag1 = TTKPersistenceDiagram(Input=arrEd1)
+            pDiag1.ScalarField = "Result"
+            pDiag1.EmbedinDomain = 0
+
+            # store inside a Cinema Database
+            cineWriter2 = TTKCinemaWriter(Input=pDiag1, DatabasePath="data/pdiags.cdb")
+            cineWriter2.ForwardInput = False
+
+            # trigger this branch of the pipeline
+            ppdwriter2 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter2)
+            coprocessor.RegisterWriter(
+                ppdwriter2, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
             )
 
         return Pipeline()
