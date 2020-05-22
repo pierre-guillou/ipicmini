@@ -1,4 +1,8 @@
+# pylint: disable=invalid-name, missing-docstring, import-error
 # --------------------------------------------------------------
+
+from paraview import coprocessing, simple
+from paraview.simple import servermanager as sm
 
 # Global timestep output options
 timeStepToStartOutputAt = 0
@@ -21,9 +25,6 @@ make_cinema_table = False
 # Code generated from cpstate.py to create the CoProcessor.
 # paraview version 5.6.0
 # --------------------------------------------------------------
-
-from paraview import coprocessing, simple
-from paraview.simple import servermanager as sm
 
 # ----------------------- CoProcessor definition -----------------------
 
