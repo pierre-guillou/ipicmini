@@ -3,7 +3,12 @@ from paraview.simple import *
 # read every other persistence diagram
 CinemaReader = TTKCinemaReader(DatabasePath="data/pdiags.cdb")
 CinemaFilter = TTKCinemaQuery(InputTable=CinemaReader)
-CinemaFilter.SQLStatement = "SELECT * FROM InputTable0 WHERE TimeStep % 2 = 0"
+CinemaFilter.SQLStatement = ("SELECT it.*, printf("
+                             "  %s_%s_%s_%s_%s, "
+                             "  it.CaseName, it.B0x, it.B0y, it.B0z, it.ns"
+                             ") AS SimParams "
+                             "FROM InputTable0 AS it "
+                             "WHERE TimeStep % 2 = 0")
 ProductReader = TTKCinemaProductReader(Input=CinemaFilter)
 
 # get a distance matrix from these diagrams
