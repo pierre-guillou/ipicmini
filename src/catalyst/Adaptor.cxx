@@ -207,6 +207,7 @@ void CoProcess(double time, unsigned int timeStep, EMfields3D *EMf) {
 
   std::vector<std::pair<std::string, double>> params{
       {"B0x", _sim_params->getB0x()},
+      {"B0y", _sim_params->getB0y()},
       {"B0z", _sim_params->getB0z()},
       {"ns", _sim_params->getNs()}};
 
