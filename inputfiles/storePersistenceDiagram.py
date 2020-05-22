@@ -22,17 +22,8 @@ make_cinema_table = False
 # paraview version 5.6.0
 # --------------------------------------------------------------
 
-# Load TTK plugin
-import os
-
-import paraview.simple
-from paraview import coprocessing
+from paraview import coprocessing, simple
 from paraview.simple import servermanager as sm
-
-paraview.simple.LoadPlugin(
-    os.getenv("PV_PLUGIN_PATH") + "/TopologyToolKit.so", ns=globals()
-)
-
 
 # ----------------------- CoProcessor definition -----------------------
 
@@ -44,11 +35,13 @@ def CreateCoProcessor():
             particles = coprocessor.CreateProducer(datadescription, "particles")
 
             # compute the magnitude of the magnetic field
-            calc = Calculator(Input=particles)
+            calc = simple.Calculator(Input=particles)
             calc.Function = "mag(B)"
 
             # store a compressed version inside a Cinema Database
-            cineWriter0 = TTKCinemaWriter(Input=calc, DatabasePath="data/tcomp.cdb")
+            cineWriter0 = simple.TTKCinemaWriter(
+                Input=calc, DatabasePath="data/tcomp.cdb"
+            )
             cineWriter0.ForwardInput = False
             cineWriter0.Storeas = 2
             cineWriter0.ScalarField = "Result"
@@ -60,21 +53,23 @@ def CreateCoProcessor():
             )
 
             # annotate data
-            arrEd0 = TTKArrayEditor(Target=calc, Source=None)
+            arrEd0 = simple.TTKArrayEditor(Target=calc, Source=None)
             arrEd0.TargetAttribute = "Field Data"
             arrEd0.DataString = "ScalarField,mag(B)"
 
             # normalize scalar field
-            sfn0 = TTKScalarFieldNormalizer(Input=arrEd0)
+            sfn0 = simple.TTKScalarFieldNormalizer(Input=arrEd0)
             sfn0.ScalarField = "Result"
 
             # generate a persistence diagram
-            pDiag = TTKPersistenceDiagram(Input=sfn0)
+            pDiag = simple.TTKPersistenceDiagram(Input=sfn0)
             pDiag.ScalarField = "Result"
             pDiag.EmbedinDomain = 0
 
             # store inside a Cinema Database
-            cineWriter1 = TTKCinemaWriter(Input=pDiag, DatabasePath="data/pdiags.cdb")
+            cineWriter1 = simple.TTKCinemaWriter(
+                Input=pDiag, DatabasePath="data/pdiags.cdb"
+            )
             cineWriter1.ForwardInput = False
 
             # trigger this branch of the pipeline
@@ -84,26 +79,28 @@ def CreateCoProcessor():
             )
 
             # extract the z component of B (Bz)
-            extrComp = ExtractComponent(Input=particles)
+            extrComp = simple.ExtractComponent(Input=particles)
             extrComp.InputArray = ["POINTS", "B"]
             extrComp.Component = "Z"
 
             # annotate data
-            arrEd1 = TTKArrayEditor(Target=extrComp, Source=None)
+            arrEd1 = simple.TTKArrayEditor(Target=extrComp, Source=None)
             arrEd1.TargetAttribute = "Field Data"
             arrEd1.DataString = "ScalarField,Bz"
 
             # normalize scalar field
-            sfn1 = TTKScalarFieldNormalizer(Input=arrEd1)
+            sfn1 = simple.TTKScalarFieldNormalizer(Input=arrEd1)
             sfn1.ScalarField = "Result"
 
             # generate the persistence diagram
-            pDiag1 = TTKPersistenceDiagram(Input=sfn1)
+            pDiag1 = simple.TTKPersistenceDiagram(Input=sfn1)
             pDiag1.ScalarField = "Result"
             pDiag1.EmbedinDomain = 0
 
             # store inside a Cinema Database
-            cineWriter2 = TTKCinemaWriter(Input=pDiag1, DatabasePath="data/pdiags.cdb")
+            cineWriter2 = simple.TTKCinemaWriter(
+                Input=pDiag1, DatabasePath="data/pdiags.cdb"
+            )
             cineWriter2.ForwardInput = False
 
             # trigger this branch of the pipeline
