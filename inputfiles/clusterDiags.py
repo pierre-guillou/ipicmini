@@ -64,7 +64,7 @@ mergeQuery.SQLStatement = """
 SELECT dm.*, -1 AS ClusterId
 FROM InputTable1 AS dm
 LEFT OUTER JOIN InputTable0 AS cl
-USING (CaseName, TimeStep)
+USING (Case_Field_B0_ns, TimeStep)
 WHERE cl.ClusterId is null
 
 UNION
@@ -74,7 +74,7 @@ UNION
 SELECT dm.*, cl.ClusterId
 FROM InputTable1 AS dm
 JOIN InputTable0 AS cl
-USING (CaseName, TimeStep)"""
+USING (Case_Field_B0_ns, TimeStep)"""
 
 # generate points from 3D coordinates
 t2p = simple.TableToPoints(Input=mergeQuery)
