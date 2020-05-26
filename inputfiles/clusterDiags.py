@@ -12,12 +12,61 @@ FROM InputTable0 AS it
 WHERE TimeStep % 2 = 0"""
 ProductReader = simple.TTKCinemaProductReader(Input=CinemaFilter)
 
-# get a distance matrix from these diagrams
+#################
+# DISTANCE MATRIX
+#################
+
 DistMat = simple.TTKPersistenceDiagramDistanceMatrix(Input=ProductReader)
 DistMat.NumberofPairs = 20
 
-# reduce the distance matrix to 3D coordinates
-DimRed = simple.TTKDimensionReduction(Input=DistMat)
+############
+# CLUSTERING
+############
+
+# filter the input diagrams to cluster only the last ones
+CineFilter2 = simple.TTKCinemaQuery(InputTable=CinemaFilter)
+CineFilter2.SQLStatement = """SELECT * FROM InputTable0
+WHERE TimeStep > 2200"""
+ProdRead2 = simple.TTKCinemaProductReader(Input=CineFilter2)
+
+# cluster the last diagrams
+Cluster = simple.TTKPersistenceDiagramClustering(Input=ProdRead2)
+Cluster.Numberofclusters = 4
+Cluster.Maximalcomputationtimes = 100.0
+
+# convert clustering FieldData to vtkTable
+ds2t = simple.TTKDataSetToTable(Input=Cluster)
+ds2t.DataAssociation = 'Field'
+
+#########################################
+# MERGING CLUSTERING INTO DISTANCE MATRIX
+#########################################
+
+mergeQuery = simple.TTKCinemaQuery(InputTable=[ds2t, DistMat])
+mergeQuery.SQLStatement = """
+-- distance matrix tuples
+-- with dummy clustering data
+-- without clustering tuples
+SELECT dm.*, -1 AS ClusterId
+FROM InputTable1 AS dm
+LEFT OUTER JOIN InputTable0 AS cl
+USING (CaseName, TimeStep)
+WHERE cl.ClusterId is null
+
+UNION
+
+-- clustering tuples
+-- with distance matrix data
+SELECT dm.*, cl.ClusterId
+FROM InputTable1 AS dm
+JOIN InputTable0 AS cl
+USING (CaseName, TimeStep)"""
+
+#####################
+# DIMENSION REDUCTION
+#####################
+
+DimRed = simple.TTKDimensionReduction(Input=mergeQuery)
 DimRed.SelectFieldswithaRegexp = 1
 DimRed.Regexp = "Diagram.*"
 DimRed.Components = 3
