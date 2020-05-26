@@ -19,6 +19,17 @@ ProductReader = simple.TTKCinemaProductReader(Input=CinemaFilter)
 DistMat = simple.TTKPersistenceDiagramDistanceMatrix(Input=ProductReader)
 DistMat.NumberofPairs = 20
 
+#####################
+# DIMENSION REDUCTION
+#####################
+
+DimRed = simple.TTKDimensionReduction(Input=DistMat)
+DimRed.SelectFieldswithaRegexp = 1
+DimRed.Regexp = "Diagram.*"
+DimRed.Components = 3
+DimRed.InputIsaDistanceMatrix = 1
+DimRed.UseAllCores = 0
+
 ############
 # CLUSTERING
 ############
@@ -34,15 +45,18 @@ Cluster = simple.TTKPersistenceDiagramClustering(Input=ProdRead2)
 Cluster.Numberofclusters = 4
 Cluster.Maximalcomputationtimes = 100.0
 
+###############################################
+# MERGE CLUSTERING INTO REDUCED DISTANCE MATRIX
+###############################################
+
 # convert clustering FieldData to vtkTable
 ds2t = simple.TTKDataSetToTable(Input=Cluster)
-ds2t.DataAssociation = 'Field'
+ds2t.DataAssociation = "Field"
 
-#########################################
-# MERGING CLUSTERING INTO DISTANCE MATRIX
-#########################################
-
-mergeQuery = simple.TTKCinemaQuery(InputTable=[ds2t, DistMat])
+mergeQuery = simple.TTKCinemaQuery(InputTable=[ds2t, DimRed])
+# exclude distance matrix from the result, too many columns for SQLite
+mergeQuery.ExcludecolumnswithaRegexp = 1
+mergeQuery.Regexp = "Diagram.*"
 mergeQuery.SQLStatement = """
 -- distance matrix tuples
 -- with dummy clustering data
@@ -62,19 +76,8 @@ FROM InputTable1 AS dm
 JOIN InputTable0 AS cl
 USING (CaseName, TimeStep)"""
 
-#####################
-# DIMENSION REDUCTION
-#####################
-
-DimRed = simple.TTKDimensionReduction(Input=mergeQuery)
-DimRed.SelectFieldswithaRegexp = 1
-DimRed.Regexp = "Diagram.*"
-DimRed.Components = 3
-DimRed.InputIsaDistanceMatrix = 1
-DimRed.UseAllCores = 0
-
 # generate points from 3D coordinates
-t2p = simple.TableToPoints(Input=DimRed)
+t2p = simple.TableToPoints(Input=mergeQuery)
 t2p.XColumn = "Component_0"
 t2p.YColumn = "Component_1"
 t2p.ZColumn = "Component_2"
