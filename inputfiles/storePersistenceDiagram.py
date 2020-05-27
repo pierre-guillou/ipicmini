@@ -34,14 +34,65 @@ def CreateCoProcessor():
         # create a producer from a simulation input
         particles = coprocessor.CreateProducer(datadescription, "particles")
 
+        # compute the magnitude of the magnetic field
+        calc = simple.Calculator(Input=particles)
+        calc.Function = "mag(B)"
+
+        # store a compressed version inside a Cinema Database
+        cineWriter0 = simple.TTKCinemaWriter(Input=calc, DatabasePath="data/tcomp.cdb")
+        cineWriter0.ForwardInput = False
+        cineWriter0.Storeas = 2
+        cineWriter0.ScalarField = "Result"
+
+        # trigger this branch of the pipeline
+        ppdwriter0 = sm.writers.XMLPImageDataWriter(Input=cineWriter0)
+        coprocessor.RegisterWriter(
+            ppdwriter0, filename="data/catalyst/tmp.pvtp", freq=10, paddingamount=0,
+        )
+
         # annotate data
-        arrEd1 = simple.TTKArrayEditor(Target=particles, Source=None)
+        arrEd0 = simple.TTKArrayEditor(Target=calc, Source=None)
+        arrEd0.TargetAttribute = "Field Data"
+        arrEd0.DataString = "ScalarField,mag(B)"
+
+        # normalize scalar field
+        sfn0 = simple.TTKScalarFieldNormalizer(Input=arrEd0)
+        sfn0.ScalarField = "Result"
+
+        # generate a persistence diagram
+        pDiag = simple.TTKPersistenceDiagram(Input=sfn0)
+        pDiag.ScalarField = "Result"
+        pDiag.EmbedinDomain = 0
+
+        # store inside a Cinema Database
+        cineWriter1 = simple.TTKCinemaWriter(
+            Input=pDiag, DatabasePath="data/pdiags.cdb"
+        )
+        cineWriter1.ForwardInput = False
+
+        # trigger this branch of the pipeline
+        ppdwriter1 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter1)
+        coprocessor.RegisterWriter(
+            ppdwriter1, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
+        )
+
+        # extract the z component of B (Bz)
+        extrComp = simple.ExtractComponent(Input=particles)
+        extrComp.InputArray = ["POINTS", "B"]
+        extrComp.Component = "Z"
+
+        # annotate data
+        arrEd1 = simple.TTKArrayEditor(Target=extrComp, Source=None)
         arrEd1.TargetAttribute = "Field Data"
-        arrEd1.DataString = "ScalarField,rhons0"
+        arrEd1.DataString = "ScalarField,Bz"
+
+        # normalize scalar field
+        sfn1 = simple.TTKScalarFieldNormalizer(Input=arrEd1)
+        sfn1.ScalarField = "Result"
 
         # generate the persistence diagram
-        pDiag1 = simple.TTKPersistenceDiagram(Input=arrEd1)
-        pDiag1.ScalarField = "rhons0"
+        pDiag1 = simple.TTKPersistenceDiagram(Input=sfn1)
+        pDiag1.ScalarField = "Result"
         pDiag1.EmbedinDomain = 0
 
         # store inside a Cinema Database
