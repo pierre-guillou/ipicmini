@@ -85,6 +85,6 @@ t2p.KeepAllDataArrays = 1
 tetra = simple.Tetrahedralize(Input=t2p)
 
 # generate a heat map from distance matrix
-# save output distance matrix, heat map and point cloud
-simple.SaveData("data/distmat.csv", Input=DimRed)
-simple.SaveData("data/distmat.vtu", simple.CleantoGrid(Input=tetra))
+# save output distance matrix and point cloud trajectories
+simple.SaveData("data/spaceWeather_distmat.csv", Input=DimRed)
+simple.SaveData("data/spaceWeather_trajectories.vtu", simple.CleantoGrid(Input=tetra))
