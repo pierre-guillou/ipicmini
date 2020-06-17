@@ -9,7 +9,7 @@ CinemaFilter.SQLStatement = """SELECT it.*, printf(
   it.CaseName, it.ScalarField, it.B0x, it.B0y, it.B0z, it.ns
 ) AS Case_Field_B0_ns
 FROM InputTable0 AS it
-WHERE TimeStep % 2 = 0"""
+WHERE TimeStep % 2 = 0 AND ScalarField = 'mag(B)'"""
 ProductReader = simple.TTKCinemaProductReader(Input=CinemaFilter)
 
 #################
