@@ -17,7 +17,8 @@ ProductReader = simple.TTKCinemaProductReader(Input=CinemaFilter)
 #################
 
 DistMat = simple.TTKPersistenceDiagramDistanceMatrix(Input=ProductReader)
-DistMat.NumberofPairs = 20
+DistMat.FilterPairs = "Number Of Pairs"
+DistMat.NumberOfPairs = 20
 
 #####################
 # DIMENSION REDUCTION

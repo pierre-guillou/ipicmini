@@ -52,7 +52,7 @@ def CreateCoProcessor():
 
         # annotate data
         arrEd0 = simple.TTKArrayEditor(Target=calc, Source=None)
-        arrEd0.TargetAttribute = "Field Data"
+        arrEd0.TargetAttributeType = "Field Data"
         arrEd0.DataString = "ScalarField,mag(B)"
 
         # normalize scalar field
@@ -83,7 +83,7 @@ def CreateCoProcessor():
 
         # annotate data
         arrEd1 = simple.TTKArrayEditor(Target=extrComp, Source=None)
-        arrEd1.TargetAttribute = "Field Data"
+        arrEd1.TargetAttributeType = "Field Data"
         arrEd1.DataString = "ScalarField,Bz"
 
         # normalize scalar field
