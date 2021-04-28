@@ -10,8 +10,7 @@ set(IPIC_DEFINITIONS "")
 add_definitions(-DOMPI_SKIP_MPICXX)
 
 # Find MPI
-find_package(MPI REQUIRED)
-list(APPEND IPIC_LIBRARIES ${MPI_LIBRARIES})
+find_package(MPI REQUIRED COMPONENTS CXX)
 
 # Find HDF5
 option(USE_HDF5 "Use HDF5 library" OFF)
@@ -35,7 +34,11 @@ if(USE_CATALYST)
         "PARAVIEW_ENABLE_PYTHON set to TRUE")
   else()
     add_library(iPICAdaptor SHARED ${CMAKE_SOURCE_DIR}/catalyst/Adaptor.cxx)
-    target_link_libraries(iPICAdaptor ParaView::PythonCatalyst VTK::CommonDataModel)
+    target_link_libraries(iPICAdaptor PUBLIC
+      ParaView::PythonCatalyst
+      VTK::CommonDataModel
+      MPI::MPI_CXX
+      )
 
     list(APPEND IPIC_LIBRARIES iPICAdaptor)
     list(APPEND IPIC_DEFINITIONS -DUSE_CATALYST)
@@ -78,18 +81,11 @@ add_library(
   ${CMAKE_SOURCE_DIR}/solvers/GMRES.cpp
 )
 
-target_link_libraries(
-  iPICmini
-  iPIC3Dlib
-  ${IPIC_LIBRARIES}
-)
-
-target_include_directories(iPIC3Dlib
-  PUBLIC
-  ${IPIC_INCLUDES}
-)
-
+target_link_libraries(iPIC3Dlib PUBLIC ${IPIC_LIBRARIES})
+target_include_directories(iPIC3Dlib PUBLIC ${IPIC_INCLUDES})
 target_compile_definitions(iPIC3Dlib PUBLIC ${IPIC_DEFINITIONS})
+
+target_link_libraries(iPICmini PUBLIC iPIC3Dlib)
 
 # Find OpenMP
 find_package(OpenMP)
