@@ -54,7 +54,10 @@ Cluster.Maximalcomputationtimes = 100.0
 ds2t = simple.TTKDataSetToTable(Input=Cluster)
 ds2t.DataAssociation = "Field"
 
-mergeQuery = simple.TTKCinemaQuery(InputTable=[ds2t, DimRed])
+# aggregate multiple vtkTables in vtkMultiBlockDataSet
+mbt = simple.TTKMergeBlockTables(Input=ds2t)
+
+mergeQuery = simple.TTKCinemaQuery(InputTable=[mbt, DimRed])
 # exclude distance matrix from the result, too many columns for SQLite
 mergeQuery.ExcludecolumnswithaRegexp = 1
 mergeQuery.Regexp = "Diagram.*"
