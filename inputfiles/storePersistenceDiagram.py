@@ -47,7 +47,10 @@ def CreateCoProcessor():
         # trigger this branch of the pipeline
         ppdwriter0 = sm.writers.XMLPImageDataWriter(Input=cineWriter0)
         coprocessor.RegisterWriter(
-            ppdwriter0, filename="data/catalyst/tmp.pvtp", freq=10, paddingamount=0,
+            ppdwriter0,
+            filename="data/catalyst/tmp.pvtp",
+            freq=10,
+            paddingamount=0,
         )
 
         # annotate data
@@ -73,38 +76,10 @@ def CreateCoProcessor():
         # trigger this branch of the pipeline
         ppdwriter1 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter1)
         coprocessor.RegisterWriter(
-            ppdwriter1, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
-        )
-
-        # extract the z component of B (Bz)
-        extrComp = simple.ExtractComponent(Input=particles)
-        extrComp.InputArray = ["POINTS", "B"]
-        extrComp.Component = "Z"
-
-        # annotate data
-        arrEd1 = simple.TTKArrayEditor(Target=extrComp, Source=None)
-        arrEd1.TargetAttributeType = "Field Data"
-        arrEd1.DataString = "ScalarField,Bz"
-
-        # normalize scalar field
-        sfn1 = simple.TTKScalarFieldNormalizer(Input=arrEd1)
-        sfn1.ScalarField = "Result"
-
-        # generate the persistence diagram
-        pDiag1 = simple.TTKPersistenceDiagram(Input=sfn1)
-        pDiag1.ScalarField = "Result"
-        pDiag1.EmbedinDomain = 0
-
-        # store inside a Cinema Database
-        cineWriter2 = simple.TTKCinemaWriter(
-            Input=pDiag1, DatabasePath="data/pdiags.cdb"
-        )
-        cineWriter2.ForwardInput = False
-
-        # trigger this branch of the pipeline
-        ppdwriter2 = sm.writers.XMLPUnstructuredGridWriter(Input=cineWriter2)
-        coprocessor.RegisterWriter(
-            ppdwriter2, filename="data/catalyst/tmp.pvtp", freq=1, paddingamount=0,
+            ppdwriter1,
+            filename="data/catalyst/tmp.pvtp",
+            freq=1,
+            paddingamount=0,
         )
 
     class CoProcessor(coprocessing.CoProcessor):
