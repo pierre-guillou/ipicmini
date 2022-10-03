@@ -18,7 +18,7 @@ ProductReader = simple.TTKCinemaProductReader(Input=CinemaFilter)
 
 DistMat = simple.TTKPersistenceDiagramDistanceMatrix(Input=ProductReader)
 DistMat.FilterPairs = "Number Of Pairs"
-DistMat.NumberOfPairs = 20
+DistMat.NumberOfPairs = 30
 
 #####################
 # DIMENSION REDUCTION
@@ -44,7 +44,7 @@ ProdRead2 = simple.TTKCinemaProductReader(Input=CineFilter2)
 # cluster the last diagrams
 Cluster = simple.TTKPersistenceDiagramClustering(Input=ProdRead2)
 Cluster.Numberofclusters = 4
-Cluster.Maximalcomputationtimes = 100.0
+Cluster.Maximalcomputationtimes = 1000.0
 
 ###############################################
 # MERGE CLUSTERING INTO REDUCED DISTANCE MATRIX
