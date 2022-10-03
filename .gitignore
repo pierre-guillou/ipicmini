@@ -1,6 +1,3 @@
-*.o
-iPICmini
 /data/
 /build/
-/.ccls-cache/
-/particles_*
+/inputfiles/__pycache__/
